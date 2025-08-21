@@ -1,5 +1,4 @@
 import JSZip from 'jszip';
-import { saveAs } from 'file-saver';
 
 export interface FileContent {
   filename: string;
