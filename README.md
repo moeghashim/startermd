@@ -1,36 +1,91 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# STARTER.md
 
-## Getting Started
+A powerful tool that generates essential markdown files for AI development workflows. Get both free template files and AI-generated custom files optimized for your specific project.
 
-First, run the development server:
+## 🌟 Features
 
+### Free Features
+- **Agent Configuration Files**: Generate AGENTS.md or CLAUDE.md based on your preferred coding agent
+- **Basic Customization**: Project name, technology stack, and agent selection
+- **Template Downloads**: Get all 4 essential workflow files:
+  - Agent configuration (AGENTS.md/CLAUDE.md)
+  - PRD creation template (create-prd.md)
+  - Task generation template (generate-tasks.md)
+  - Task processing template (process-task-list.md)
+
+### AI-Powered Generation ($5)
+- **Custom File Generation**: AI analyzes your project description and generates tailored files
+- **Project-Specific Content**: Templates filled with examples relevant to your domain
+- **Optimized Configuration**: Setup commands, code style, and guidelines specific to your tech stack
+- **GPT-4 Powered**: Advanced AI understanding of your project requirements
+
+## 🚀 Live Demo
+
+Visit [STARTER.md](https://startermd-8m7tn61v3-bannaa.vercel.app) to try it out!
+
+## 🛠 Tech Stack
+
+- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **UI Components**: shadcn/ui
+- **AI Integration**: OpenAI GPT-4
+- **Payments**: Stripe
+- **Deployment**: Vercel
+
+## 📋 Supported Agents
+
+- **Cursor** (AGENTS.md)
+- **Amp** (AGENTS.md) 
+- **Jules** (AGENTS.md)
+- **RooCode** (AGENTS.md)
+- **Codex** (AGENTS.md)
+- **Factory** (AGENTS.md)
+- **Claude Code** (CLAUDE.md - custom configuration)
+
+## 🔧 Development Setup
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/moeghashim/startermd.git
+cd startermd
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fill in your API keys:
+- `OPENAI_API_KEY`: Your OpenAI API key
+- `STRIPE_SECRET_KEY`: Your Stripe secret key
+- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`: Your Stripe publishable key
 
-## Learn More
+4. Run the development server:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📝 API Endpoints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `POST /api/generate` - Generate custom files using AI
+- `POST /api/create-payment-intent` - Create Stripe payment intent
 
-## Deploy on Vercel
+## 🎯 Based On
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project builds upon the excellent work from:
+- [agents.md](https://agents.md) - The AGENTS.md format specification
+- [ai-dev-tasks](https://github.com/snarktank/ai-dev-tasks) - Structured AI development workflow templates
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 👤 Author
+
+Built by [@moeghashim](https://x.com/moeghashim)
+
+## 📄 License
+
+MIT License - feel free to use and modify for your own projects!

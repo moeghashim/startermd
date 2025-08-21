@@ -1,0 +1,116 @@
+import { NextRequest, NextResponse } from 'next/server';
+import OpenAI from 'openai';
+
+const openai = process.env.OPENAI_API_KEY 
+  ? new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    })
+  : null;
+
+export async function POST(req: NextRequest) {
+  try {
+    if (!openai) {
+      return NextResponse.json(
+        { error: 'AI generation not configured' },
+        { status: 500 }
+      );
+    }
+
+    const { prompt, projectName, preferredAgent, techStack } = await req.json();
+
+    if (!prompt) {
+      return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
+    }
+
+    const systemPrompt = `You are an expert AI development consultant. Generate 4 markdown files for AI development workflows based on the user's project description.
+
+IMPORTANT: Return ONLY a valid JSON object with this exact structure:
+{
+  "agentsFile": {
+    "filename": "${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'AGENTS.md'}",
+    "content": "markdown content here"
+  },
+  "prdFile": {
+    "filename": "create-prd.md", 
+    "content": "markdown content here"
+  },
+  "tasksFile": {
+    "filename": "generate-tasks.md",
+    "content": "markdown content here"
+  },
+  "processFile": {
+    "filename": "process-task-list.md",
+    "content": "markdown content here"
+  }
+}
+
+Generate these files:
+
+1. **${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'AGENTS.md'}**: Project-specific configuration
+   ${preferredAgent === 'Claude Code' ? `
+   Use this structure:
+   - Project Overview (describe the specific project)
+   - Technology Stack (based on user input)
+   - Setup Commands (project-specific)
+   - Code Style Guidelines (appropriate for the tech stack)
+   - Development Guidelines
+   - Testing Instructions
+   - Build and Deployment
+   - Additional Context
+   ` : `
+   Use this structure:
+   - Setup commands (project-specific)
+   - Code style (appropriate for the tech stack)  
+   - Project overview (describe the specific project)
+   - Preferred Agent: ${preferredAgent || 'Not specified'}
+   - Technology Stack (based on user input)
+   - Testing instructions
+   - Build and deployment
+   - Additional instructions
+   `}
+
+2. **create-prd.md**: Template for generating Product Requirements Documents
+   Keep this as a reusable template but customize examples to match the project domain.
+
+3. **generate-tasks.md**: Template for breaking PRDs into task lists
+   Keep this as a reusable template but customize examples to match the project domain.
+
+4. **process-task-list.md**: Template for managing task execution
+   Keep this as a reusable template.
+
+Project Details:
+- Name: ${projectName || 'Not specified'}
+- Preferred Agent: ${preferredAgent || 'Not specified'}
+- Technology Stack: ${techStack?.join(', ') || 'Not specified'}
+- Description: ${prompt}
+
+Make the content specific to this project while maintaining the template structure for the workflow files.`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o", // Will upgrade to GPT-5 when available
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: prompt }
+      ],
+      temperature: 0.7,
+      max_tokens: 4000,
+    });
+
+    const response = completion.choices[0].message.content;
+    
+    if (!response) {
+      throw new Error('No response from OpenAI');
+    }
+
+    // Parse the JSON response
+    const generatedFiles = JSON.parse(response);
+
+    return NextResponse.json({ files: generatedFiles });
+  } catch (error) {
+    console.error('OpenAI generation error:', error);
+    return NextResponse.json(
+      { error: 'Failed to generate files' },
+      { status: 500 }
+    );
+  }
+}

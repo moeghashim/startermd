@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User } from 'lucide-react';
+import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles } from 'lucide-react';
 
 import agentsTemplate from '@/lib/templates/agents-md';
 import claudeMdTemplate from '@/lib/templates/claude-md';
@@ -16,6 +16,8 @@ import createPrdTemplate from '@/lib/templates/create-prd';
 import generateTasksTemplate from '@/lib/templates/generate-tasks';
 import processTaskListTemplate from '@/lib/templates/process-task-list';
 import { downloadFile, downloadZip, FileContent } from '@/lib/file-utils';
+import AIGeneration from '@/components/AIGeneration';
+import { Separator } from '@/components/ui/separator';
 
 export default function HomePage() {
   const [mode, setMode] = useState<'basic' | 'advanced'>('basic');
@@ -174,6 +176,17 @@ export default function HomePage() {
             configuration files optimized for your agent, plus templates for PRDs, task generation, and task processing.
           </p>
           
+          <div className="flex items-center justify-center gap-8 text-sm text-slate-600 mb-8">
+            <div className="flex items-center gap-2">
+              <Badge variant="secondary">Free</Badge>
+              <span>Template files with basic customization</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="border-purple-200 text-purple-700">$5</Badge>
+              <span>AI-generated files for your specific project</span>
+            </div>
+          </div>
+          
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
@@ -325,12 +338,40 @@ export default function HomePage() {
           </CardContent>
         </Card>
 
+        {/* AI Generation Section */}
+        <div className="space-y-6">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="h-6 w-6 text-purple-600" />
+              <h3 className="text-2xl font-bold">Generate Custom Files with AI</h3>
+            </div>
+            <p className="text-slate-600 max-w-2xl mx-auto">
+              Want files tailored specifically to your project? Our AI can analyze your project description and generate custom configuration and workflow files optimized for your use case.
+            </p>
+          </div>
+
+          <AIGeneration 
+            projectName={projectName}
+            preferredAgent={preferredAgent}
+            techStack={techStack}
+          />
+        </div>
+
+        <div className="flex items-center gap-4 my-8">
+          <Separator className="flex-1" />
+          <Badge variant="outline" className="px-4 py-2">Or use free templates below</Badge>
+          <Separator className="flex-1" />
+        </div>
+
         {/* Files Preview */}
         <Card>
           <CardHeader>
-            <CardTitle>Generated Files</CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle>Free Template Files</CardTitle>
+              <Badge variant="secondary">Free</Badge>
+            </div>
             <CardDescription>
-              Preview and download individual files or get them all at once
+              Preview and download template files with your basic customizations
             </CardDescription>
           </CardHeader>
           <CardContent>
