@@ -174,7 +174,7 @@ export default function HomePage() {
                   <Zap className="h-6 w-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-900">STARTER.md</h1>
+                  <h1 className="text-2xl font-bold text-slate-900">STARTERMD.com</h1>
                   <p className="text-sm text-slate-600">AI development workflow files generator</p>
                 </div>
               </div>
@@ -203,7 +203,7 @@ export default function HomePage() {
                   <Zap className="h-6 w-6" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-slate-900">STARTER.md</h1>
+                  <h1 className="text-2xl font-bold text-slate-900">STARTERMD.com</h1>
                   <p className="text-sm text-slate-600">AI development workflow files generator</p>
                 </div>
               </div>
@@ -243,7 +243,7 @@ export default function HomePage() {
                 <Zap className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-slate-900">STARTER.md</h1>
+                <h1 className="text-2xl font-bold text-slate-900">STARTERMD.com</h1>
                 <p className="text-sm text-slate-600">AI development workflow files generator</p>
               </div>
             </div>
@@ -519,7 +519,7 @@ export default function HomePage() {
             Built by <a href="https://x.com/moeghashim" className="underline hover:text-slate-700" target="_blank" rel="noopener noreferrer">@moeghashim</a>
           </p>
           <p className="text-xs">
-            STARTER.md - Generate essential files for AI-powered development workflows
+            STARTERMD.com - Generate essential files for AI-powered development workflows
           </p>
         </footer>
       </main>
