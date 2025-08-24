@@ -9,10 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Sparkles, CreditCard, Download, CheckCircle, Tag } from 'lucide-react';
-import { loadStripe } from '@stripe/stripe-js';
 import { downloadZip, FileContent } from '@/lib/file-utils';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface AIGenerationProps {
   projectName: string;
@@ -46,7 +43,7 @@ interface PricingData {
   finalAmount: number;
 }
 
-export default function AIGeneration({ projectName, preferredAgent, techStack }: AIGenerationProps) {
+export default function AIGeneration({ projectName, preferredAgent }: AIGenerationProps) {
   const [prompt, setPrompt] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<CouponData | null>(null);
@@ -56,7 +53,6 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
     finalAmount: 500,
   });
   const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [generatedFiles, setGeneratedFiles] = useState<GeneratedFiles | null>(null);
   const [error, setError] = useState('');
@@ -114,8 +110,8 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
     setError('');
 
     try {
-      // Create payment intent
-      const response = await fetch('/api/create-payment-intent', {
+      // Create Stripe Checkout session
+      const response = await fetch('/api/create-checkout-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,55 +123,17 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create payment intent');
+        throw new Error('Failed to create checkout session');
       }
 
-      const { clientSecret } = await response.json();
-      // Note: clientSecret would be used with Stripe Elements in production
-      const stripe = await stripePromise;
+      const { url } = await response.json();
       
-      // Using clientSecret for potential future Stripe Elements integration
-      console.log('Payment intent created:', clientSecret);
-
-      if (!stripe) {
-        throw new Error('Stripe failed to load');
-      }
-
-      // For demo purposes, we'll simulate a successful payment
-      // In production, you'd use Stripe Elements for real payment processing
-      const mockPaymentResult = { error: null };
-
-      if (mockPaymentResult.error) {
-        setError('Payment failed. Please try again.');
-        return;
-      }
-
-      // Payment successful, now generate files
-      setIsProcessingPayment(false);
-      setIsGenerating(true);
-
-      const generateResponse = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: prompt.trim(),
-          projectName,
-          preferredAgent,
-          techStack,
-        }),
-      });
-
-      if (!generateResponse.ok) {
-        throw new Error('Failed to generate files');
-      }
-
-      const { files } = await generateResponse.json();
-      setGeneratedFiles(files);
+      // Redirect to Stripe Checkout
+      window.location.href = url;
+      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
       setIsProcessingPayment(false);
-      setIsGenerating(false);
     }
   };
 
@@ -361,19 +319,14 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
 
         <Button 
           onClick={handlePayAndGenerate}
-          disabled={!prompt.trim() || isProcessingPayment || isGenerating}
+          disabled={!prompt.trim() || isProcessingPayment}
           className="w-full gap-2"
           size="lg"
         >
           {isProcessingPayment ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin" />
-              Processing Payment...
-            </>
-          ) : isGenerating ? (
-            <>
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Generating Files...
+              Redirecting to Payment...
             </>
           ) : (
             <>

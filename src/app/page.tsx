@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,6 +17,7 @@ import generateTasksTemplate from '@/lib/templates/generate-tasks';
 import processTaskListTemplate from '@/lib/templates/process-task-list';
 import { downloadFile, downloadZip, FileContent } from '@/lib/file-utils';
 import AIGeneration from '@/components/AIGeneration';
+import PaymentSuccess from '@/components/PaymentSuccess';
 import { Separator } from '@/components/ui/separator';
 
 export default function HomePage() {
@@ -35,6 +36,18 @@ export default function HomePage() {
     'Single quotes, no semicolons',
     'Use functional patterns where possible'
   ]);
+  const [paymentStatus, setPaymentStatus] = useState<'none' | 'success' | 'canceled'>('none');
+  const [sessionId, setSessionId] = useState<string>('');
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('success')) {
+      setPaymentStatus('success');
+      setSessionId(urlParams.get('session_id') || '');
+    } else if (urlParams.get('canceled')) {
+      setPaymentStatus('canceled');
+    }
+  }, []);
 
   const agents = [
     {
@@ -141,6 +154,83 @@ export default function HomePage() {
   const handleDownloadSingle = (file: FileContent) => {
     downloadFile(file.filename, file.content);
   };
+
+  const handleBackToHome = () => {
+    setPaymentStatus('none');
+    setSessionId('');
+    // Clear URL parameters
+    window.history.replaceState({}, '', window.location.pathname);
+  };
+
+  // Show payment success page if payment was successful
+  if (paymentStatus === 'success' && sessionId) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <header className="border-b bg-white/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-white">
+                  <Zap className="h-6 w-6" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-slate-900">STARTER.md</h1>
+                  <p className="text-sm text-slate-600">AI development workflow files generator</p>
+                </div>
+              </div>
+              <Button onClick={handleBackToHome} variant="outline">
+                Back to Home
+              </Button>
+            </div>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8">
+          <PaymentSuccess sessionId={sessionId} onBack={handleBackToHome} />
+        </main>
+      </div>
+    );
+  }
+
+  // Show canceled message if payment was canceled
+  if (paymentStatus === 'canceled') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+        <header className="border-b bg-white/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-900 text-white">
+                  <Zap className="h-6 w-6" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold text-slate-900">STARTER.md</h1>
+                  <p className="text-sm text-slate-600">AI development workflow files generator</p>
+                </div>
+              </div>
+              <Button onClick={handleBackToHome} variant="outline">
+                Back to Home
+              </Button>
+            </div>
+          </div>
+        </header>
+        <main className="container mx-auto px-4 py-8">
+          <Card className="border-orange-200 bg-orange-50 max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-orange-800">Payment Canceled</CardTitle>
+              <CardDescription className="text-orange-700">
+                Your payment was canceled. You can try again or use the free templates below.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button onClick={handleBackToHome} className="w-full">
+                Return to Home
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
