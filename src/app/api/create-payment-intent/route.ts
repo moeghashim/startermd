@@ -16,16 +16,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { prompt, projectName } = await req.json();
+    const { prompt, projectName, couponCode, finalAmount } = await req.json();
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 500, // $5.00 in cents
+    const paymentIntentData: Stripe.PaymentIntentCreateParams = {
+      amount: finalAmount || 500, // Use final amount after coupon discount, default to $5.00
       currency: 'usd',
       metadata: {
         prompt: prompt.substring(0, 500), // Limit for metadata
         projectName: projectName || 'Unnamed Project',
+        ...(couponCode && { couponCode }),
       },
-    });
+    };
+
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentData);
 
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,

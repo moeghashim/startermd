@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Sparkles, CreditCard, Download, CheckCircle } from 'lucide-react';
+import { Loader2, Sparkles, CreditCard, Download, CheckCircle, Tag } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { downloadZip, FileContent } from '@/lib/file-utils';
 
@@ -31,12 +32,77 @@ interface GeneratedFiles {
   processFile: GeneratedFile;
 }
 
+interface CouponData {
+  id: string;
+  name: string | null;
+  percent_off: number | null;
+  amount_off: number | null;
+  currency: string | null;
+}
+
+interface PricingData {
+  originalAmount: number;
+  discountAmount: number;
+  finalAmount: number;
+}
+
 export default function AIGeneration({ projectName, preferredAgent, techStack }: AIGenerationProps) {
   const [prompt, setPrompt] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<CouponData | null>(null);
+  const [pricing, setPricing] = useState<PricingData>({
+    originalAmount: 500,
+    discountAmount: 0,
+    finalAmount: 500,
+  });
+  const [isValidatingCoupon, setIsValidatingCoupon] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const [generatedFiles, setGeneratedFiles] = useState<GeneratedFiles | null>(null);
   const [error, setError] = useState('');
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) {
+      setError('Please enter a coupon code');
+      return;
+    }
+
+    setIsValidatingCoupon(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/validate-coupon', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ couponCode: couponCode.trim().toUpperCase() }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to validate coupon');
+      }
+
+      setAppliedCoupon(data.coupon);
+      setPricing(data.pricing);
+      setError('');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Invalid coupon code');
+    } finally {
+      setIsValidatingCoupon(false);
+    }
+  };
+
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setCouponCode('');
+    setPricing({
+      originalAmount: 500,
+      discountAmount: 0,
+      finalAmount: 500,
+    });
+    setError('');
+  };
 
   const handlePayAndGenerate = async () => {
     if (!prompt.trim()) {
@@ -55,6 +121,8 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
         body: JSON.stringify({
           prompt: prompt.trim(),
           projectName,
+          couponCode: appliedCoupon?.id,
+          finalAmount: pricing.finalAmount,
         }),
       });
 
@@ -65,6 +133,9 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
       const { clientSecret } = await response.json();
       // Note: clientSecret would be used with Stripe Elements in production
       const stripe = await stripePromise;
+      
+      // Using clientSecret for potential future Stripe Elements integration
+      console.log('Payment intent created:', clientSecret);
 
       if (!stripe) {
         throw new Error('Stripe failed to load');
@@ -165,7 +236,23 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-purple-600" />
           <CardTitle>AI-Powered File Generation</CardTitle>
-          <Badge variant="outline" className="ml-auto">$5</Badge>
+          <div className="ml-auto flex items-center gap-2">
+            {appliedCoupon && (
+              <Badge variant="default" className="bg-green-100 text-green-800 border-green-200">
+                {appliedCoupon.percent_off 
+                  ? `${appliedCoupon.percent_off}% off` 
+                  : `$${(appliedCoupon.amount_off! / 100).toFixed(2)} off`}
+              </Badge>
+            )}
+            <Badge variant="outline" className={pricing.finalAmount < pricing.originalAmount ? "line-through opacity-60" : ""}>
+              ${(pricing.originalAmount / 100).toFixed(2)}
+            </Badge>
+            {pricing.finalAmount < pricing.originalAmount && (
+              <Badge variant="outline" className="text-green-600 border-green-600">
+                ${(pricing.finalAmount / 100).toFixed(2)}
+              </Badge>
+            )}
+          </div>
         </div>
         <CardDescription>
           Get all 4 files custom-generated for your specific project using AI. 
@@ -187,6 +274,59 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
           <p className="text-xs text-slate-500 mt-1">
             Be specific about your project&apos;s purpose, features, and technical requirements for best results.
           </p>
+        </div>
+
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Tag className="h-4 w-4 text-slate-600" />
+            <label className="text-sm font-medium">
+              Coupon Code <span className="text-slate-400">(optional)</span>
+            </label>
+          </div>
+          
+          {!appliedCoupon ? (
+            <div className="flex gap-2">
+              <Input
+                value={couponCode}
+                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                placeholder="Enter coupon code"
+                className="uppercase"
+                disabled={isValidatingCoupon}
+              />
+              <Button
+                onClick={handleApplyCoupon}
+                disabled={!couponCode.trim() || isValidatingCoupon}
+                variant="outline"
+                size="default"
+              >
+                {isValidatingCoupon ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  'Apply'
+                )}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <span className="text-sm text-green-800 font-medium">
+                  {appliedCoupon.name || `Coupon ${appliedCoupon.id}`} applied
+                </span>
+                <Badge variant="secondary" className="text-xs">
+                  Save ${(pricing.discountAmount / 100).toFixed(2)}
+                </Badge>
+              </div>
+              <Button
+                onClick={handleRemoveCoupon}
+                variant="ghost"
+                size="sm"
+                className="text-green-700 hover:text-green-800 hover:bg-green-100"
+              >
+                Remove
+              </Button>
+            </div>
+          )}
         </div>
 
         {error && (
@@ -238,13 +378,13 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
           ) : (
             <>
               <CreditCard className="h-4 w-4" />
-              Pay $5 & Generate Custom Files
+              Pay ${(pricing.finalAmount / 100).toFixed(2)} & Generate Custom Files
             </>
           )}
         </Button>
 
         <p className="text-xs text-slate-500 text-center">
-          Secure payment processing powered by Stripe. One-time payment of $5.
+          Secure payment processing powered by Stripe. One-time payment of ${(pricing.finalAmount / 100).toFixed(2)}.
         </p>
       </CardContent>
     </Card>
