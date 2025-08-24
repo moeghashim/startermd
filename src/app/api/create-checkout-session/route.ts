@@ -16,8 +16,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { prompt, projectName, couponCode, finalAmount } = await req.json();
+    const { prompt, projectName, couponCode } = await req.json();
 
+    // For checkout sessions, we should use the original price and let Stripe handle the discount
+    const originalAmount = 500; // Always use original $5 price for the line item
+    
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
       line_items: [
@@ -28,7 +31,7 @@ export async function POST(req: NextRequest) {
               name: 'AI-Generated Development Files',
               description: `Custom AI-generated files for ${projectName || 'your project'}`,
             },
-            unit_amount: finalAmount || 500, // Amount in cents
+            unit_amount: originalAmount, // Use original price, discount applied separately
           },
           quantity: 1,
         },
@@ -46,7 +49,7 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    // Apply coupon if provided
+    // Apply coupon if provided - Stripe will calculate the discount automatically
     if (couponCode) {
       sessionParams.discounts = [{
         coupon: couponCode,
@@ -61,8 +64,16 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('Stripe checkout session error:', error);
+    
+    // Return more specific error information for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error details:', errorMessage);
+    
     return NextResponse.json(
-      { error: 'Failed to create checkout session' },
+      { 
+        error: 'Failed to create checkout session',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
