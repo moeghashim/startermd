@@ -1,11 +1,10 @@
 {
-  "totalGenerated": 2,
+  "totalGenerated": 1,
   "agentBreakdown": {
-    "Claude Code": 1,
-    "Test Agent": 1
+    "Claude Code": 1
   },
   "dailyStats": {
-    "2025-08-25": 2
+    "2025-08-25": 1
   },
   "lastUpdated": "2025-08-25T01:46:29.075Z"
 }
