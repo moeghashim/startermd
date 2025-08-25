@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { updateStats } from '@/lib/stats';
 
 const openai = process.env.OPENAI_API_KEY 
   ? new OpenAI({
@@ -104,6 +105,9 @@ Make the content specific to this project while maintaining the template structu
 
     // Parse the JSON response
     const generatedFiles = JSON.parse(response);
+
+    // Track stats (don't await to avoid slowing down the response)
+    updateStats(preferredAgent || 'Unknown').catch(console.error);
 
     return NextResponse.json({ files: generatedFiles });
   } catch (error) {

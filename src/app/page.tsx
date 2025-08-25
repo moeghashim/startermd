@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles } from 'lucide-react';
+import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, BarChart3 } from 'lucide-react';
 
 import agentsTemplate from '@/lib/templates/agents-md';
 import claudeMdTemplate from '@/lib/templates/claude-md';
@@ -178,9 +178,19 @@ export default function HomePage() {
                   <p className="text-sm text-slate-600">AI development workflow files generator</p>
                 </div>
               </div>
-              <Button onClick={handleBackToHome} variant="outline">
-                Back to Home
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => window.location.href = '/stats'} 
+                  variant="outline" 
+                  className="gap-2"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Stats
+                </Button>
+                <Button onClick={handleBackToHome} variant="outline">
+                  Back to Home
+                </Button>
+              </div>
             </div>
           </div>
         </header>
@@ -207,9 +217,19 @@ export default function HomePage() {
                   <p className="text-sm text-slate-600">AI development workflow files generator</p>
                 </div>
               </div>
-              <Button onClick={handleBackToHome} variant="outline">
-                Back to Home
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => window.location.href = '/stats'} 
+                  variant="outline" 
+                  className="gap-2"
+                >
+                  <BarChart3 className="h-4 w-4" />
+                  Stats
+                </Button>
+                <Button onClick={handleBackToHome} variant="outline">
+                  Back to Home
+                </Button>
+              </div>
             </div>
           </div>
         </header>
@@ -247,10 +267,21 @@ export default function HomePage() {
                 <p className="text-sm text-slate-600">AI development workflow files generator</p>
               </div>
             </div>
-            <Button onClick={handleDownloadAll} size="sm" className="gap-2">
-              <Archive className="h-4 w-4" />
-              Download All Files
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                onClick={() => window.location.href = '/stats'} 
+                size="sm" 
+                variant="outline" 
+                className="gap-2"
+              >
+                <BarChart3 className="h-4 w-4" />
+                Stats
+              </Button>
+              <Button onClick={handleDownloadAll} size="sm" className="gap-2">
+                <Archive className="h-4 w-4" />
+                Download All Files
+              </Button>
+            </div>
           </div>
         </div>
       </header>
