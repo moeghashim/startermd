@@ -14,12 +14,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "STARTER.md - AI Development Workflow Files Generator",
+  title: "AGENTS.md - AI Development Workflow Files Generator",
   description: "Generate essential markdown files for AI development workflows: AGENTS.md, PRD templates, task generators, and more.",
   keywords: ["AI development", "AGENTS.md", "PRD templates", "task management", "development workflow"],
-  authors: [{ name: "STARTER.md" }],
+  authors: [{ name: "AGENTS.md" }],
   openGraph: {
-    title: "STARTER.md - AI Development Workflow Files Generator",
+    title: "AGENTS.md - AI Development Workflow Files Generator",
     description: "Generate essential markdown files for AI development workflows",
     type: "website",
   },
