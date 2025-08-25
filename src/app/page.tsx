@@ -117,7 +117,7 @@ export default function HomePage() {
   
   const files: FileContent[] = [
     {
-      filename: usesClaudeConfig ? 'CLAUDE.md' : 'AGENTS.md',
+      filename: usesClaudeConfig ? 'CLAUDE.md' : 'STARTER.md',
       content: usesClaudeConfig 
         ? claudeMdTemplate(
             projectName || undefined, 
@@ -344,9 +344,9 @@ export default function HomePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Customize Your AGENTS.md</CardTitle>
+                <CardTitle>Customize Your STARTER.md</CardTitle>
                 <CardDescription>
-                  Personalize your AGENTS.md file with project-specific information
+                  Personalize your STARTER.md file with project-specific information
                 </CardDescription>
               </div>
               <div className="flex bg-slate-100 rounded-lg p-1">
@@ -405,7 +405,7 @@ export default function HomePage() {
               {preferredAgent && (
                 <p className="text-xs text-slate-500 mt-2">
                   {agents.find(a => a.name === preferredAgent)?.supportsAgentsMd 
-                    ? 'This agent supports AGENTS.md files.' 
+                    ? 'This agent supports STARTER.md files.' 
                     : 'This agent uses custom configuration files.'}
                 </p>
               )}
@@ -510,7 +510,7 @@ export default function HomePage() {
             <Tabs defaultValue="agents" className="w-full">
               <TabsList className="grid grid-cols-4 w-full mb-6">
                 <TabsTrigger value="agents" className="text-xs">
-                  {usesClaudeConfig ? 'CLAUDE.md' : 'AGENTS.md'}
+                  {usesClaudeConfig ? 'CLAUDE.md' : 'STARTER.md'}
                 </TabsTrigger>
                 <TabsTrigger value="prd" className="text-xs">PRD Template</TabsTrigger>
                 <TabsTrigger value="tasks" className="text-xs">Task Generator</TabsTrigger>

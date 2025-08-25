@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 IMPORTANT: Return ONLY a valid JSON object with this exact structure:
 {
   "agentsFile": {
-    "filename": "${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'AGENTS.md'}",
+    "filename": "${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'STARTER.md'}",
     "content": "markdown content here"
   },
   "prdFile": {
@@ -47,7 +47,7 @@ IMPORTANT: Return ONLY a valid JSON object with this exact structure:
 
 Generate these files:
 
-1. **${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'AGENTS.md'}**: Project-specific configuration
+1. **${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'STARTER.md'}**: Project-specific configuration
    ${preferredAgent === 'Claude Code' ? `
    Use this structure:
    - Project Overview (describe the specific project)
