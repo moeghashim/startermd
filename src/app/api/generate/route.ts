@@ -92,8 +92,8 @@ Make the content specific to this project while maintaining the template structu
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt }
       ],
-      temperature: 0.7,
-      max_tokens: 4000,
+      reasoning_effort: "medium", // GPT-5 reasoning parameter
+      verbosity: "medium", // GPT-5 response length parameter
     });
 
     const response = completion.choices[0].message.content;
