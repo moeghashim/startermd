@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, Download, Sparkles } from 'lucide-react';
+import { Loader2, CheckCircle, Download, Sparkles, FileText, Copy } from 'lucide-react';
 import { downloadZip, FileContent } from '@/lib/file-utils';
 
 interface GeneratedFile {
@@ -99,6 +101,15 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
     downloadZip(files, 'ai-generated-files.zip');
   };
 
+  const handleCopyToClipboard = async (content: string) => {
+    try {
+      await navigator.clipboard.writeText(content);
+      // You could add a toast notification here if you want
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+    }
+  };
+
   if (isGenerating) {
     return (
       <Card className="border-blue-200 bg-blue-50">
@@ -156,51 +167,108 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
   }
 
   if (generatedFiles) {
+    const files = [
+      { key: 'agents', file: generatedFiles.agentsFile, icon: FileText },
+      { key: 'prd', file: generatedFiles.prdFile, icon: FileText },
+      { key: 'tasks', file: generatedFiles.tasksFile, icon: FileText },
+      { key: 'process', file: generatedFiles.processFile, icon: FileText },
+    ];
+
     return (
-      <Card className="border-green-200 bg-green-50">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <CardTitle className="text-green-800">Files Generated Successfully!</CardTitle>
-          </div>
-          <CardDescription className="text-green-700">
-            Your payment has been processed and your custom AI development workflow files are ready for download.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {paymentDetails && (
-            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-200">
-              <div>
-                <div className="font-medium">Payment Completed</div>
-                <div className="text-sm text-gray-600">
-                  ${(paymentDetails.amount_total / 100).toFixed(2)} • {paymentDetails.metadata.projectName}
-                </div>
-              </div>
-              <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                Paid
-              </Badge>
+      <div className="space-y-6">
+        <Card className="border-green-200 bg-green-50">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              <CardTitle className="text-green-800">Files Generated Successfully!</CardTitle>
             </div>
-          )}
-          
-          <div className="grid grid-cols-2 gap-2">
-            {Object.values(generatedFiles).map((file, index) => (
-              <Badge key={index} variant="secondary" className="justify-center py-2">
-                {file.filename}
-              </Badge>
-            ))}
-          </div>
-          
-          <div className="flex gap-2">
-            <Button onClick={handleDownloadGenerated} className="flex-1 gap-2">
-              <Download className="h-4 w-4" />
-              Download Generated Files
-            </Button>
-            <Button onClick={onBack} variant="outline" className="gap-2">
-              Generate New Files
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            <CardDescription className="text-green-700">
+              Your payment has been processed and your custom AI development workflow files are ready.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {paymentDetails && (
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-200">
+                <div>
+                  <div className="font-medium">Payment Completed</div>
+                  <div className="text-sm text-gray-600">
+                    ${(paymentDetails.amount_total / 100).toFixed(2)} • {paymentDetails.metadata.projectName}
+                  </div>
+                </div>
+                <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+                  Paid
+                </Badge>
+              </div>
+            )}
+            
+            <div className="flex gap-2">
+              <Button onClick={handleDownloadGenerated} className="flex-1 gap-2">
+                <Download className="h-4 w-4" />
+                Download All Files as ZIP
+              </Button>
+              <Button onClick={onBack} variant="outline" className="gap-2">
+                Generate New Files
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* File Preview Section */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-purple-600" />
+              <CardTitle>Your Generated Files</CardTitle>
+            </div>
+            <CardDescription>
+              Preview your custom AI-generated files below. You can copy individual files or download all as a ZIP.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="agents" className="w-full">
+              <TabsList className="grid grid-cols-4 w-full mb-6">
+                {files.map(({ key, file }) => (
+                  <TabsTrigger key={key} value={key} className="text-xs">
+                    {file.filename}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {files.map(({ key, file }) => (
+                <TabsContent key={key} value={key}>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="secondary">{file.filename}</Badge>
+                        <span className="text-sm text-slate-500">
+                          {file.content.length} characters
+                        </span>
+                      </div>
+                      <Button
+                        onClick={() => handleCopyToClipboard(file.content)}
+                        size="sm"
+                        variant="outline"
+                        className="gap-2"
+                      >
+                        <Copy className="h-4 w-4" />
+                        Copy Content
+                      </Button>
+                    </div>
+                    <div className="relative">
+                      <Textarea
+                        value={file.content}
+                        readOnly
+                        className="font-mono text-sm min-h-96 resize-none"
+                        placeholder="File content will appear here..."
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+              ))}
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
