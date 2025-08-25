@@ -107,7 +107,9 @@ Make the content specific to this project while maintaining the template structu
     const generatedFiles = JSON.parse(response);
 
     // Track stats (don't await to avoid slowing down the response)
-    updateStats(preferredAgent || 'Unknown').catch(console.error);
+    updateStats(preferredAgent || 'Unknown').catch(error => {
+      console.error('Stats tracking error:', error);
+    });
 
     return NextResponse.json({ files: generatedFiles });
   } catch (error) {

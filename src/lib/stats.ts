@@ -27,11 +27,15 @@ export async function getStats(): Promise<Stats> {
 
 export async function updateStats(agent: string): Promise<void> {
   try {
+    console.log('Updating stats for agent:', agent);
+    
     // Ensure data directory exists
     const dataDir = join(process.cwd(), 'data');
     try {
       await fs.access(dataDir);
+      console.log('Data directory exists');
     } catch {
+      console.log('Creating data directory');
       await fs.mkdir(dataDir, { recursive: true });
     }
 
@@ -43,9 +47,12 @@ export async function updateStats(agent: string): Promise<void> {
     stats.dailyStats[today] = (stats.dailyStats[today] || 0) + 1;
     stats.lastUpdated = new Date().toISOString();
 
+    console.log('Writing stats:', stats);
     await fs.writeFile(STATS_FILE, JSON.stringify(stats, null, 2));
+    console.log('Stats updated successfully');
   } catch (error) {
     console.error('Error updating stats:', error);
+    console.error('Error details:', error instanceof Error ? error.message : 'Unknown error');
     // Don't throw error as this shouldn't break the main functionality
   }
 }
