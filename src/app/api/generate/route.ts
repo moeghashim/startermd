@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
 IMPORTANT: Return ONLY a valid JSON object with this exact structure:
 {
   "agentsFile": {
-    "filename": "${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'STARTER.md'}",
+    "filename": "${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : preferredAgent === 'Replit' ? 'replit.md' : 'STARTER.md'}",
     "content": "markdown content here"
   },
   "prdFile": {
@@ -47,7 +47,7 @@ IMPORTANT: Return ONLY a valid JSON object with this exact structure:
 
 Generate these files:
 
-1. **${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'STARTER.md'}**: Project-specific configuration
+1. **${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : preferredAgent === 'Replit' ? 'replit.md' : 'STARTER.md'}**: Project-specific configuration
    ${preferredAgent === 'Claude Code' ? `
    Use this structure:
    - Project Overview (describe the specific project)
@@ -58,6 +58,16 @@ Generate these files:
    - Testing Instructions
    - Build and Deployment
    - Additional Context
+   ` : preferredAgent === 'Replit' ? `
+   Use this structure for replit.md:
+   - Project Overview (describe the specific project)
+   - Technology Stack (Frontend, Backend, Database, Package Manager)
+   - Setup Commands (project-specific installation and dev commands)
+   - Coding Style & Preferences (language preferences, component preferences, styling, type definitions)
+   - Communication Preferences (development approach, code implementation)
+   - Project Context (current development phase, key priorities)
+   - Best Practices (file organization, dependencies, testing strategy)
+   - Additional Notes
    ` : `
    Use this structure:
    - Setup commands (project-specific)
