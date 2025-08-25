@@ -21,6 +21,12 @@ export async function POST(req: NextRequest) {
     // For checkout sessions, we should use the original price and let Stripe handle the discount
     const originalAmount = 500; // Always use original $5 price for the line item
     
+    console.log('Creating checkout session with:', {
+      projectName,
+      couponCode,
+      originalAmount
+    });
+    
     const sessionParams: Stripe.Checkout.SessionCreateParams = {
       payment_method_types: ['card'],
       line_items: [
@@ -51,12 +57,19 @@ export async function POST(req: NextRequest) {
 
     // Apply coupon if provided - Stripe will calculate the discount automatically
     if (couponCode) {
+      console.log('Applying coupon:', couponCode);
       sessionParams.discounts = [{
         coupon: couponCode,
       }];
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
+    
+    console.log('Created checkout session:', {
+      id: session.id,
+      amount_total: session.amount_total,
+      discounts: session.discounts
+    });
 
     return NextResponse.json({
       sessionId: session.id,

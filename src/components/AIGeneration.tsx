@@ -70,7 +70,7 @@ export default function AIGeneration({ projectName, preferredAgent }: AIGenerati
       const response = await fetch('/api/validate-coupon', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ couponCode: couponCode.trim().toUpperCase() }),
+        body: JSON.stringify({ couponCode: couponCode.trim() }),
       });
 
       const data = await response.json();
@@ -246,9 +246,8 @@ export default function AIGeneration({ projectName, preferredAgent }: AIGenerati
             <div className="flex gap-2">
               <Input
                 value={couponCode}
-                onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                onChange={(e) => setCouponCode(e.target.value)}
                 placeholder="Enter coupon code"
-                className="uppercase"
                 disabled={isValidatingCoupon}
               />
               <Button
