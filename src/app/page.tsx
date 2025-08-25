@@ -308,7 +308,7 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8">
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
               <span className="text-sm font-medium">Agent Config</span>
@@ -325,6 +325,17 @@ export default function HomePage() {
               <Zap className="h-5 w-5 text-slate-500" />
               <span className="text-sm font-medium">Task Processor</span>
             </div>
+          </div>
+
+          <div className="text-center">
+            <Button 
+              onClick={() => window.location.href = '/stats'} 
+              variant="outline" 
+              className="gap-2 mb-4"
+            >
+              <BarChart3 className="h-4 w-4" />
+              View Generation Statistics
+            </Button>
           </div>
         </div>
 
