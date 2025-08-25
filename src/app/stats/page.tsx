@@ -190,7 +190,7 @@ export default function StatsPage() {
                 {stats?.dailyStats[new Date().toISOString().split('T')[0]] || 0}
               </div>
               <p className="text-xs text-muted-foreground">
-                Files generated today
+                Files created today
               </p>
             </CardContent>
           </Card>
