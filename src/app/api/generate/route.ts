@@ -87,7 +87,7 @@ Project Details:
 Make the content specific to this project while maintaining the template structure for the workflow files.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // Will upgrade to GPT-5 when available
+      model: "gpt-5-nano", // GPT-5 nano for enhanced performance
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt }
@@ -108,8 +108,21 @@ Make the content specific to this project while maintaining the template structu
     return NextResponse.json({ files: generatedFiles });
   } catch (error) {
     console.error('OpenAI generation error:', error);
+    
+    // Log more details for debugging
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('Error details:', errorMessage);
+    
+    // Check if it's a JSON parsing error
+    if (errorMessage.includes('JSON')) {
+      console.error('JSON parsing failed - AI response might not be valid JSON');
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to generate files' },
+      { 
+        error: 'Failed to generate files',
+        details: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+      },
       { status: 500 }
     );
   }
