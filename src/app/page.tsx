@@ -94,6 +94,27 @@ export default function HomePage() {
       supportsAgentsMd: true
     },
     {
+      id: 'aider',
+      name: 'Aider',
+      url: 'https://aider.chat',
+      logo: '/logos/aider.svg',
+      supportsAgentsMd: true
+    },
+    {
+      id: 'gemini-cli',
+      name: 'Gemini CLI',
+      url: 'https://ai.google.dev/gemini-api/docs/cli',
+      logo: '/logos/gemini.svg',
+      supportsAgentsMd: true
+    },
+    {
+      id: 'open-code',
+      name: 'Open Code',
+      url: 'https://github.com/features/copilot',
+      logo: '/logos/opencode.svg',
+      supportsAgentsMd: true
+    },
+    {
       id: 'claude-code',
       name: 'Claude Code',
       url: 'https://docs.anthropic.com/en/docs/claude-code',
