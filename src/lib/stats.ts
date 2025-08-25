@@ -14,7 +14,7 @@ export async function getStats(): Promise<Stats> {
   try {
     const data = await fs.readFile(STATS_FILE, 'utf8');
     return JSON.parse(data);
-  } catch (error) {
+  } catch {
     // Return default stats if file doesn't exist
     return {
       totalGenerated: 0,
