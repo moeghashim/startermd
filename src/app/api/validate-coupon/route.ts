@@ -18,6 +18,12 @@ export async function POST(req: NextRequest) {
 
     const { couponCode } = await req.json();
 
+    console.log('Validating coupon:', { 
+      couponCode, 
+      length: couponCode?.length,
+      type: typeof couponCode 
+    });
+
     if (!couponCode) {
       return NextResponse.json(
         { error: 'Coupon code is required' },
@@ -25,8 +31,37 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Retrieve the coupon from Stripe
-    const coupon = await stripe.coupons.retrieve(couponCode);
+    // First try to find promotion code, then get the underlying coupon
+    console.log('Looking up promotion code:', couponCode);
+    
+    let coupon;
+    try {
+      // Try to find promotion code first
+      const promotionCodes = await stripe.promotionCodes.list({
+        code: couponCode,
+        active: true,
+        limit: 1
+      });
+      
+      if (promotionCodes.data.length > 0) {
+        console.log('Found promotion code:', promotionCodes.data[0].id);
+        coupon = promotionCodes.data[0].coupon;
+      } else {
+        // Fallback: try as direct coupon ID
+        console.log('No promotion code found, trying as direct coupon ID');
+        coupon = await stripe.coupons.retrieve(couponCode);
+      }
+    } catch {
+      // If both promotion code and direct coupon fail, throw error
+      throw new Error('Invalid coupon code');
+    }
+    
+    console.log('Final coupon found:', {
+      id: coupon.id,
+      valid: coupon.valid,
+      percent_off: coupon.percent_off,
+      amount_off: coupon.amount_off
+    });
 
     // Check if coupon is valid and active
     if (!coupon.valid) {

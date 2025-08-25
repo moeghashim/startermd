@@ -55,12 +55,37 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    // Apply coupon if provided - Stripe will calculate the discount automatically
+    // Apply coupon if provided - try promotion code first, then direct coupon
     if (couponCode) {
       console.log('Applying coupon:', couponCode);
-      sessionParams.discounts = [{
-        coupon: couponCode,
-      }];
+      
+      try {
+        // First try as promotion code
+        const promotionCodes = await stripe.promotionCodes.list({
+          code: couponCode,
+          active: true,
+          limit: 1
+        });
+        
+        if (promotionCodes.data.length > 0) {
+          console.log('Using promotion code for checkout');
+          sessionParams.discounts = [{
+            promotion_code: promotionCodes.data[0].id,
+          }];
+        } else {
+          // Fallback to direct coupon
+          console.log('Using direct coupon for checkout');
+          sessionParams.discounts = [{
+            coupon: couponCode,
+          }];
+        }
+      } catch (error) {
+        console.error('Error applying coupon to checkout:', error);
+        // Try direct coupon as last resort
+        sessionParams.discounts = [{
+          coupon: couponCode,
+        }];
+      }
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams);
