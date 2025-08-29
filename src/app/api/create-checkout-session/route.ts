@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { prompt, projectName, couponCode } = await req.json();
+    const { prompt, projectName, couponCode, preferredAgent } = await req.json();
 
     // For checkout sessions, we should use the original price and let Stripe handle the discount
     const originalAmount = 500; // Always use original $5 price for the line item
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       metadata: {
         prompt: prompt.substring(0, 500), // Limit for metadata
         projectName: projectName || 'Unnamed Project',
+        preferredAgent: preferredAgent || 'AGENTS.md',
         ...(couponCode && { couponCode }),
       },
       automatic_tax: {

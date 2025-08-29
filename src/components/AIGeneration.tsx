@@ -117,6 +117,7 @@ export default function AIGeneration({ projectName, preferredAgent }: AIGenerati
         body: JSON.stringify({
           prompt: prompt.trim(),
           projectName,
+          preferredAgent,
           couponCode: appliedCoupon?.id,
           finalAmount: pricing.finalAmount,
         }),
