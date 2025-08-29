@@ -299,7 +299,7 @@ export default function AIGeneration({ projectName, preferredAgent }: AIGenerati
           <div className="grid grid-cols-1 gap-2 text-sm text-slate-600">
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
-              <span>Custom {preferredAgent === 'Claude Code' ? 'CLAUDE.md' : 'AGENTS.md'} optimized for your tech stack</span>
+              <span>Custom {preferredAgent === 'Claude Code' ? 'CLAUDE.md' : preferredAgent === 'Replit' ? 'replit.md' : 'AGENTS.md'} optimized for your tech stack</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
