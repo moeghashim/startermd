@@ -70,7 +70,7 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
         body: JSON.stringify({
           prompt: sessionData.metadata.prompt,
           projectName: sessionData.metadata.projectName,
-          preferredAgent: sessionData.metadata.preferredAgent || 'AGENTS.md',
+          preferredAgent: sessionData.metadata.preferredAgent || 'Cursor',
           techStack: [], // Default or from session
         }),
       });

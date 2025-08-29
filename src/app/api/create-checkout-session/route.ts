@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
       metadata: {
         prompt: prompt.substring(0, 500), // Limit for metadata
         projectName: projectName || 'Unnamed Project',
-        preferredAgent: preferredAgent || 'AGENTS.md',
+        preferredAgent: preferredAgent || 'Cursor',
         ...(couponCode && { couponCode }),
       },
       automatic_tax: {
