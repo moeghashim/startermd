@@ -184,12 +184,34 @@ export default function HomePage() {
     }
   ];
 
-  const handleDownloadAll = () => {
+  const handleDownloadAll = async () => {
     downloadZip(files, 'startermd-files.zip');
+    
+    // Track stats for free download
+    try {
+      await fetch('/api/stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent: preferredAgent || 'Unknown' }),
+      });
+    } catch (error) {
+      console.error('Failed to track download stats:', error);
+    }
   };
 
-  const handleDownloadSingle = (file: FileContent) => {
+  const handleDownloadSingle = async (file: FileContent) => {
     downloadFile(file.filename, file.content);
+    
+    // Track stats for single file download
+    try {
+      await fetch('/api/stats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ agent: preferredAgent || 'Unknown' }),
+      });
+    } catch (error) {
+      console.error('Failed to track download stats:', error);
+    }
   };
 
   const handleBackToHome = () => {
