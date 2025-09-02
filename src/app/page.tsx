@@ -362,7 +362,7 @@ export default function HomePage() {
               <span>Template files with basic customization</span>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="border-purple-200 text-purple-700">$5</Badge>
+              <Badge variant="outline" className="border-purple-200 text-purple-700">$5 one-time</Badge>
               <span>AI-generated files for your specific project</span>
             </div>
           </div>
