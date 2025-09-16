@@ -4,11 +4,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, Download, Sparkles, FileText, Copy, Check } from 'lucide-react';
-import { downloadZip, FileContent } from '@/lib/file-utils';
+import { Loader2, CheckCircle, Download, Sparkles, FileText } from 'lucide-react';
+import { downloadZip, FileContent as FileContentType } from '@/lib/file-utils';
+import { FileContent } from '@/components/FileContent';
 
 interface GeneratedFile {
   filename: string;
@@ -91,7 +91,7 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
   const handleDownloadGenerated = () => {
     if (!generatedFiles) return;
 
-    const files: FileContent[] = [
+    const files: FileContentType[] = [
       generatedFiles.agentsFile,
       generatedFiles.prdFile,
       generatedFiles.tasksFile,
@@ -253,55 +253,12 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
 
               {files.map(({ key, file }) => (
                 <TabsContent key={key} value={key}>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{file.filename}</Badge>
-                        <span className="text-sm text-slate-500">
-                          {file.content.length} characters
-                        </span>
-                      </div>
-                      <Button
-                        onClick={() => handleCopyToClipboard(file.content, file.filename)}
-                        size="sm"
-                        variant="outline"
-                        className={`gap-2 transition-all duration-200 ${
-                          copiedFile === file.filename 
-                            ? 'bg-green-50 text-green-700 border-green-200' 
-                            : ''
-                        }`}
-                      >
-                        {copiedFile === file.filename ? (
-                          <>
-                            <Check className="h-4 w-4" />
-                            Copied!
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="h-4 w-4" />
-                            Copy Content
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                    <div className="relative">
-                      <Textarea
-                        value={file.content}
-                        readOnly
-                        className="font-mono text-sm min-h-96 resize-none bg-slate-50 border-slate-200 leading-relaxed whitespace-pre-wrap"
-                        placeholder="File content will appear here..."
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                          lineHeight: '1.6'
-                        }}
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge variant="outline" className="text-xs bg-white/90">
-                          {file.filename.split('.').pop()?.toUpperCase()} Format
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
+                  <FileContent
+                    filename={file.filename}
+                    content={file.content}
+                    onCopy={() => handleCopyToClipboard(file.content, file.filename)}
+                    isCopied={copiedFile === file.filename}
+                  />
                 </TabsContent>
               ))}
             </Tabs>

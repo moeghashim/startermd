@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, BarChart3, Copy, Check } from 'lucide-react';
+import { FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, BarChart3 } from 'lucide-react';
 
 import agentsTemplate from '@/lib/templates/agents-md';
 import claudeMdTemplate from '@/lib/templates/claude-md';
@@ -16,10 +16,11 @@ import replitMdTemplate from '@/lib/templates/replit-md';
 import createPrdTemplate from '@/lib/templates/create-prd';
 import generateTasksTemplate from '@/lib/templates/generate-tasks';
 import processTaskListTemplate from '@/lib/templates/process-task-list';
-import { downloadFile, downloadZip, FileContent } from '@/lib/file-utils';
+import { downloadFile, downloadZip, FileContent as FileContentType } from '@/lib/file-utils';
 import AIGeneration from '@/components/AIGeneration';
 import PaymentSuccess from '@/components/PaymentSuccess';
 import { Separator } from '@/components/ui/separator';
+import { FileContent } from '@/components/FileContent';
 
 export default function HomePage() {
   const [mode, setMode] = useState<'basic' | 'advanced'>('basic');
@@ -146,7 +147,7 @@ export default function HomePage() {
   const usesClaudeConfig = selectedAgent?.id === 'claude-code';
   const usesReplitConfig = selectedAgent?.id === 'replit';
   
-  const files: FileContent[] = [
+  const files: FileContentType[] = [
     {
       filename: usesClaudeConfig ? 'CLAUDE.md' : usesReplitConfig ? 'replit.md' : 'AGENTS.md',
       content: usesClaudeConfig 
@@ -200,7 +201,7 @@ export default function HomePage() {
     }
   };
 
-  const handleDownloadSingle = async (file: FileContent) => {
+  const handleDownloadSingle = async (file: FileContentType) => {
     downloadFile(file.filename, file.content);
     
     // Track stats for single file download
@@ -605,65 +606,13 @@ export default function HomePage() {
 
               {files.map((file, index) => (
                 <TabsContent key={file.filename} value={['agents', 'prd', 'tasks', 'process'][index]}>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary">{file.filename}</Badge>
-                        <span className="text-sm text-slate-500">
-                          {file.content.length} characters
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={() => handleCopyToClipboard(file.content, file.filename)}
-                          size="sm"
-                          variant="outline"
-                          className={`gap-2 transition-all duration-200 ${
-                            copiedFile === file.filename 
-                              ? 'bg-green-50 text-green-700 border-green-200' 
-                              : ''
-                          }`}
-                        >
-                          {copiedFile === file.filename ? (
-                            <>
-                              <Check className="h-4 w-4" />
-                              Copied!
-                            </>
-                          ) : (
-                            <>
-                              <Copy className="h-4 w-4" />
-                              Copy
-                            </>
-                          )}
-                        </Button>
-                        <Button 
-                          onClick={() => handleDownloadSingle(file)} 
-                          size="sm"
-                          variant="outline"
-                          className="gap-2"
-                        >
-                          <Download className="h-4 w-4" />
-                          Download
-                        </Button>
-                      </div>
-                    </div>
-                    <div className="relative">
-                      <Textarea 
-                        value={file.content}
-                        readOnly
-                        className="font-mono text-sm min-h-96 bg-slate-50 border-slate-200 leading-relaxed whitespace-pre-wrap"
-                        style={{ 
-                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
-                          lineHeight: '1.6'
-                        }}
-                      />
-                      <div className="absolute top-2 right-2">
-                        <Badge variant="outline" className="text-xs bg-white/90">
-                          {file.filename.split('.').pop()?.toUpperCase()} Format
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
+                <FileContent
+                filename={file.filename}
+                content={file.content}
+                onCopy={() => handleCopyToClipboard(file.content, file.filename)}
+                onDownload={() => handleDownloadSingle(file)}
+                  isCopied={copiedFile === file.filename}
+                   />
                 </TabsContent>
               ))}
             </Tabs>
