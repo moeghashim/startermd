@@ -1,5 +1,4 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { kv } from '@vercel/kv';
 
 export interface Stats {
   totalGenerated: number;
@@ -8,14 +7,24 @@ export interface Stats {
   lastUpdated: string;
 }
 
-const STATS_FILE = join(process.cwd(), 'data', 'stats.json');
+const STATS_KEY = 'startermd:stats';
 
 export async function getStats(): Promise<Stats> {
   try {
-    const data = await fs.readFile(STATS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch {
-    // Return default stats if file doesn't exist
+    const stats = await kv.get<Stats>(STATS_KEY);
+    if (stats) {
+      return stats;
+    }
+    // Return default stats if key doesn't exist
+    return {
+      totalGenerated: 0,
+      agentBreakdown: {},
+      dailyStats: {},
+      lastUpdated: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('Error fetching stats from KV:', error);
+    // Return default stats on error
     return {
       totalGenerated: 0,
       agentBreakdown: {},
@@ -27,14 +36,6 @@ export async function getStats(): Promise<Stats> {
 
 export async function updateStats(agent: string): Promise<void> {
   try {
-    // Ensure data directory exists
-    const dataDir = join(process.cwd(), 'data');
-    try {
-      await fs.access(dataDir);
-    } catch {
-      await fs.mkdir(dataDir, { recursive: true });
-    }
-
     const stats = await getStats();
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
@@ -43,9 +44,9 @@ export async function updateStats(agent: string): Promise<void> {
     stats.dailyStats[today] = (stats.dailyStats[today] || 0) + 1;
     stats.lastUpdated = new Date().toISOString();
 
-    await fs.writeFile(STATS_FILE, JSON.stringify(stats, null, 2));
+    await kv.set(STATS_KEY, stats);
   } catch (error) {
-    console.error('Error updating stats:', error);
+    console.error('Error updating stats in KV:', error);
     // Don't throw error as this shouldn't break the main functionality
   }
 }
