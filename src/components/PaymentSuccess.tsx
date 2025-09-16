@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, CheckCircle, Download, Sparkles, FileText, Copy } from 'lucide-react';
+import { Loader2, CheckCircle, Download, Sparkles, FileText, Copy, Check } from 'lucide-react';
 import { downloadZip, FileContent } from '@/lib/file-utils';
 
 interface GeneratedFile {
@@ -101,12 +101,29 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
     downloadZip(files, 'ai-generated-files.zip');
   };
 
-  const handleCopyToClipboard = async (content: string) => {
+  const [copiedFile, setCopiedFile] = useState<string>('');
+
+  const handleCopyToClipboard = async (content: string, filename: string) => {
     try {
-      await navigator.clipboard.writeText(content);
-      // You could add a toast notification here if you want
+      // Ensure proper line endings for markdown
+      const formattedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      await navigator.clipboard.writeText(formattedContent);
+      setCopiedFile(filename);
+      // Reset copied state after 2 seconds
+      setTimeout(() => setCopiedFile(''), 2000);
     } catch (err) {
       console.error('Failed to copy to clipboard:', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = content;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopiedFile(filename);
+      setTimeout(() => setCopiedFile(''), 2000);
     }
   };
 
@@ -245,22 +262,44 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
                         </span>
                       </div>
                       <Button
-                        onClick={() => handleCopyToClipboard(file.content)}
+                        onClick={() => handleCopyToClipboard(file.content, file.filename)}
                         size="sm"
                         variant="outline"
-                        className="gap-2"
+                        className={`gap-2 transition-all duration-200 ${
+                          copiedFile === file.filename 
+                            ? 'bg-green-50 text-green-700 border-green-200' 
+                            : ''
+                        }`}
                       >
-                        <Copy className="h-4 w-4" />
-                        Copy Content
+                        {copiedFile === file.filename ? (
+                          <>
+                            <Check className="h-4 w-4" />
+                            Copied!
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-4 w-4" />
+                            Copy Content
+                          </>
+                        )}
                       </Button>
                     </div>
                     <div className="relative">
                       <Textarea
                         value={file.content}
                         readOnly
-                        className="font-mono text-sm min-h-96 resize-none"
+                        className="font-mono text-sm min-h-96 resize-none bg-slate-50 border-slate-200 leading-relaxed whitespace-pre-wrap"
                         placeholder="File content will appear here..."
+                        style={{ 
+                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                          lineHeight: '1.6'
+                        }}
                       />
+                      <div className="absolute top-2 right-2">
+                        <Badge variant="outline" className="text-xs bg-white/90">
+                          {file.filename.split('.').pop()?.toUpperCase()} Format
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 </TabsContent>

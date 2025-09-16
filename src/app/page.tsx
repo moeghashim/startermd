@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, BarChart3 } from 'lucide-react';
+import { Download, FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, BarChart3, Copy, Check } from 'lucide-react';
 
 import agentsTemplate from '@/lib/templates/agents-md';
 import claudeMdTemplate from '@/lib/templates/claude-md';
@@ -39,6 +39,7 @@ export default function HomePage() {
   ]);
   const [paymentStatus, setPaymentStatus] = useState<'none' | 'success' | 'canceled'>('none');
   const [sessionId, setSessionId] = useState<string>('');
+  const [copiedFile, setCopiedFile] = useState<string>('');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -211,6 +212,30 @@ export default function HomePage() {
       });
     } catch (error) {
       console.error('Failed to track download stats:', error);
+    }
+  };
+
+  const handleCopyToClipboard = async (content: string, filename: string) => {
+    try {
+      // Ensure proper line endings for markdown
+      const formattedContent = content.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+      await navigator.clipboard.writeText(formattedContent);
+      setCopiedFile(filename);
+      // Reset copied state after 2 seconds
+      setTimeout(() => setCopiedFile(''), 2000);
+    } catch (err) {
+      console.error('Failed to copy to clipboard:', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = content;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      setCopiedFile(filename);
+      setTimeout(() => setCopiedFile(''), 2000);
     }
   };
 
@@ -588,22 +613,55 @@ export default function HomePage() {
                           {file.content.length} characters
                         </span>
                       </div>
-                      <Button 
-                        onClick={() => handleDownloadSingle(file)} 
-                        size="sm"
-                        variant="outline"
-                        className="gap-2"
-                      >
-                        <Download className="h-4 w-4" />
-                        Download
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => handleCopyToClipboard(file.content, file.filename)}
+                          size="sm"
+                          variant="outline"
+                          className={`gap-2 transition-all duration-200 ${
+                            copiedFile === file.filename 
+                              ? 'bg-green-50 text-green-700 border-green-200' 
+                              : ''
+                          }`}
+                        >
+                          {copiedFile === file.filename ? (
+                            <>
+                              <Check className="h-4 w-4" />
+                              Copied!
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-4 w-4" />
+                              Copy
+                            </>
+                          )}
+                        </Button>
+                        <Button 
+                          onClick={() => handleDownloadSingle(file)} 
+                          size="sm"
+                          variant="outline"
+                          className="gap-2"
+                        >
+                          <Download className="h-4 w-4" />
+                          Download
+                        </Button>
+                      </div>
                     </div>
                     <div className="relative">
                       <Textarea 
                         value={file.content}
                         readOnly
-                        className="font-mono text-sm min-h-96"
+                        className="font-mono text-sm min-h-96 bg-slate-50 border-slate-200 leading-relaxed whitespace-pre-wrap"
+                        style={{ 
+                          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                          lineHeight: '1.6'
+                        }}
                       />
+                      <div className="absolute top-2 right-2">
+                        <Badge variant="outline" className="text-xs bg-white/90">
+                          {file.filename.split('.').pop()?.toUpperCase()} Format
+                        </Badge>
+                      </div>
                     </div>
                   </div>
                 </TabsContent>
