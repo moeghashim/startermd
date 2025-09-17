@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, CheckCircle, Download, Sparkles, FileText } from 'lucide-react';
 import { downloadZip, FileContent as FileContentType } from '@/lib/file-utils';
 import { FileContent } from '@/components/FileContent';
+import { ChatInterface } from '@/components/chat-interface';
 
 interface GeneratedFile {
   filename: string;
@@ -102,6 +103,7 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
   };
 
   const [copiedFile, setCopiedFile] = useState<string>('');
+  const [showChat, setShowChat] = useState(false);
 
   const handleCopyToClipboard = async (content: string, filename: string) => {
     try {
@@ -223,6 +225,9 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
                 <Download className="h-4 w-4" />
                 Download All Files as ZIP
               </Button>
+              <Button onClick={() => setShowChat(true)} variant="secondary" className="gap-2">
+                💬 Chat with Docs
+              </Button>
               <Button onClick={onBack} variant="outline" className="gap-2">
                 Generate New Files
               </Button>
@@ -230,40 +235,51 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
           </CardContent>
         </Card>
 
-        {/* File Preview Section */}
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-purple-600" />
-              <CardTitle>Your Generated Files</CardTitle>
-            </div>
-            <CardDescription>
-              Preview your custom AI-generated files below. You can copy individual files or download all as a ZIP.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="agents" className="w-full">
-              <TabsList className="grid grid-cols-4 w-full mb-6">
-                {files.map(({ key, file }) => (
-                  <TabsTrigger key={key} value={key} className="text-xs">
-                    {file.filename}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+        {showChat ? (
+          <Card>
+            <CardContent className="p-6">
+              <ChatInterface 
+                docs={files.map(f => `# ${f.file.filename}\n\n${f.file.content}`).join('\n\n---\n\n')}
+                onClose={() => setShowChat(false)}
+              />
+            </CardContent>
+          </Card>
+        ) : (
+          /* File Preview Section */
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-600" />
+                <CardTitle>Your Generated Files</CardTitle>
+              </div>
+              <CardDescription>
+                Preview your custom AI-generated files below. You can copy individual files or download all as a ZIP.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="agents" className="w-full">
+                <TabsList className="grid grid-cols-4 w-full mb-6">
+                  {files.map(({ key, file }) => (
+                    <TabsTrigger key={key} value={key} className="text-xs">
+                      {file.filename}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
 
-              {files.map(({ key, file }) => (
-                <TabsContent key={key} value={key}>
-                  <FileContent
-                    filename={file.filename}
-                    content={file.content}
-                    onCopy={() => handleCopyToClipboard(file.content, file.filename)}
-                    isCopied={copiedFile === file.filename}
-                  />
-                </TabsContent>
-              ))}
-            </Tabs>
-          </CardContent>
-        </Card>
+                {files.map(({ key, file }) => (
+                  <TabsContent key={key} value={key}>
+                    <FileContent
+                      filename={file.filename}
+                      content={file.content}
+                      onCopy={() => handleCopyToClipboard(file.content, file.filename)}
+                      isCopied={copiedFile === file.filename}
+                    />
+                  </TabsContent>
+                ))}
+              </Tabs>
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
