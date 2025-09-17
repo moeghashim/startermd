@@ -43,7 +43,7 @@ interface PricingData {
   finalAmount: number;
 }
 
-export default function AIGeneration({ projectName, preferredAgent }: AIGenerationProps) {
+export default function AIGeneration({ projectName, preferredAgent, techStack }: AIGenerationProps) {
   const [prompt, setPrompt] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<CouponData | null>(null);
@@ -118,6 +118,7 @@ export default function AIGeneration({ projectName, preferredAgent }: AIGenerati
           prompt: prompt.trim(),
           projectName,
           preferredAgent,
+          techStack,
           couponCode: appliedCoupon?.id,
           finalAmount: pricing.finalAmount,
         }),

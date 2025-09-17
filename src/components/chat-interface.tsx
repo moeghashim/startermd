@@ -1,6 +1,6 @@
 'use client';
 
-import { useChat } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,10 +13,24 @@ interface ChatInterfaceProps {
 }
 
 export function ChatInterface({ docs, onClose }: ChatInterfaceProps) {
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
-    api: '/api/chat',
-    body: { docs },
-  });
+  const [input, setInput] = useState('');
+  
+  const { messages, sendMessage, status } = useChat();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (input.trim() && status !== 'streaming') {
+      sendMessage({
+        role: 'user' as const,
+        parts: [{ type: 'text' as const, text: input }],
+      }, {
+        body: { docs },
+      });
+      setInput('');
+    }
+  };
+
+  const isLoading = status === 'streaming';
 
   return (
     <div className="flex flex-col h-full max-w-4xl mx-auto">
@@ -56,7 +70,11 @@ export function ChatInterface({ docs, onClose }: ChatInterfaceProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="whitespace-pre-wrap">{message.content}</div>
+              <div className="whitespace-pre-wrap">
+                {message.parts.map((part) => 
+                  part.type === 'text' ? part.text : ''
+                ).join('')}
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -76,7 +94,7 @@ export function ChatInterface({ docs, onClose }: ChatInterfaceProps) {
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Textarea
           value={input}
-          onChange={handleInputChange}
+          onChange={(e) => setInput(e.target.value)}
           placeholder="Ask a question about your docs..."
           className="flex-1 min-h-[60px]"
           disabled={isLoading}

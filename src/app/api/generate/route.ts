@@ -18,6 +18,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { prompt, projectName, preferredAgent, techStack } = await req.json();
+    
+    // Use default tech stack if none provided
+    const defaultTechStack = ['React', 'Next.js', 'JavaScript'];
+    const finalTechStack = techStack && techStack.length > 0 ? techStack : defaultTechStack;
 
     if (!prompt) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
@@ -92,19 +96,19 @@ Generate these files:
 Project Details:
 - Name: ${projectName || 'Not specified'}
 - Preferred Agent: ${preferredAgent || 'Not specified'}
-- Technology Stack: ${techStack?.join(', ') || 'Not specified'}
+- Technology Stack: ${finalTechStack.join(', ')}
 - Description: ${prompt}
+
+IMPORTANT: The technology stack is ${finalTechStack.join(', ')}. Make sure all generated configuration reflects this specific technology choice and doesn't suggest alternative technologies unless explicitly mentioned in the project description.
 
 Make the content specific to this project while maintaining the template structure for the workflow files.`;
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-5-nano", // GPT-5 nano for enhanced performance
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: prompt }
       ],
-      reasoning_effort: "medium", // GPT-5 reasoning parameter
-      verbosity: "medium", // GPT-5 response length parameter
     });
 
     const response = completion.choices[0].message.content;
