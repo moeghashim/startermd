@@ -61,10 +61,11 @@ export async function updateStats(agent: string): Promise<void> {
 
     const { error } = await supabase
       .from('key_value_store')
-      .upsert({ 
-        key: STATS_KEY, 
-        value: JSON.stringify(stats) 
-      });
+      .update({ 
+        value: JSON.stringify(stats),
+        updated_at: new Date().toISOString()
+      })
+      .eq('key', STATS_KEY);
 
     if (error) {
       throw error;
