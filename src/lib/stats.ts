@@ -1,9 +1,19 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL!;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+console.log('🔍 Stats lib initialized - URL:', !!supabaseUrl, 'Key:', !!supabaseKey);
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Stats lib: Missing Supabase environment variables');
+  console.error('   NEXT_PUBLIC_SUPABASE_URL:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+  console.error('   SUPABASE_URL:', !!process.env.SUPABASE_URL);
+  console.error('   NEXT_PUBLIC_SUPABASE_ANON_KEY:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  console.error('   SUPABASE_ANON_KEY:', !!process.env.SUPABASE_ANON_KEY);
+}
+
+const supabase = createClient(supabaseUrl!, supabaseKey!);
 
 export interface Stats {
   totalGenerated: number;
@@ -23,6 +33,7 @@ export async function getStats(): Promise<Stats> {
       .single();
 
     if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+      console.error('🔍 getStats: Supabase error:', error);
       throw error;
     }
 
@@ -38,7 +49,7 @@ export async function getStats(): Promise<Stats> {
       lastUpdated: new Date().toISOString()
     };
   } catch (error) {
-    console.error('Error fetching stats from Supabase:', error);
+    console.error('❌ getStats: Error fetching stats from Supabase:', error);
     // Return default stats on error
     return {
       totalGenerated: 0,
