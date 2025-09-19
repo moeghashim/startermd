@@ -25,15 +25,22 @@ export default function StatsPage() {
 
   const fetchStats = async () => {
     try {
+      console.log('🔍 Stats Page: Fetching stats from /api/stats');
       const response = await fetch('/api/stats');
+      console.log('🔍 Stats Page: Response status:', response.status);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch stats');
+        const errorText = await response.text();
+        console.error('🔍 Stats Page: Response error:', errorText);
+        throw new Error(`Failed to fetch stats: ${response.status} ${errorText}`);
       }
+      
       const data = await response.json();
+      console.log('🔍 Stats Page: Data received:', data);
       setStats(data);
     } catch (err) {
+      console.error('🔍 Stats Page: Fetch error:', err);
       setError('Failed to load stats');
-      console.error(err);
     } finally {
       setLoading(false);
     }

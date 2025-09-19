@@ -191,13 +191,20 @@ export default function HomePage() {
     
     // Track stats for free download
     try {
-      await fetch('/api/stats', {
+      console.log('📊 Tracking download stats for agent:', preferredAgent || 'Unknown');
+      const response = await fetch('/api/stats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ agent: preferredAgent || 'Unknown' }),
       });
+      
+      if (response.ok) {
+        console.log('📊 Download stats tracked successfully');
+      } else {
+        console.error('📊 Failed to track download stats:', response.status, await response.text());
+      }
     } catch (error) {
-      console.error('Failed to track download stats:', error);
+      console.error('📊 Failed to track download stats:', error);
     }
   };
 
@@ -206,13 +213,20 @@ export default function HomePage() {
     
     // Track stats for single file download
     try {
-      await fetch('/api/stats', {
+      console.log('📊 Tracking single file download stats for agent:', preferredAgent || 'Unknown');
+      const response = await fetch('/api/stats', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ agent: preferredAgent || 'Unknown' }),
       });
+      
+      if (response.ok) {
+        console.log('📊 Single file download stats tracked successfully');
+      } else {
+        console.error('📊 Failed to track single file download stats:', response.status, await response.text());
+      }
     } catch (error) {
-      console.error('Failed to track download stats:', error);
+      console.error('📊 Failed to track single file download stats:', error);
     }
   };
 
