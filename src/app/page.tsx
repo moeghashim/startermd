@@ -513,11 +513,7 @@ export default function HomePage() {
               </Select>
               {preferredAgent && (
                 <p className="text-xs text-slate-500 mt-2">
-                  {agents.find(a => a.name === preferredAgent)?.supportsAgentsMd 
-                    ? 'This agent supports AGENTS.md files.' 
-                    : usesReplitConfig
-                    ? 'This agent uses replit.md configuration files.'
-                    : 'This agent uses custom configuration files.'}
+                  All agent configuration files (AGENTS.md, CLAUDE.md, replit.md) will be generated for maximum compatibility.
                 </p>
               )}
             </div>
