@@ -143,34 +143,36 @@ export default function HomePage() {
     setTechStack(techStack.filter(t => t !== tech));
   };
 
-  const selectedAgent = agents.find(a => a.name === preferredAgent);
-  const usesClaudeConfig = selectedAgent?.id === 'claude-code';
-  const usesReplitConfig = selectedAgent?.id === 'replit';
+
   
   const files: FileContentType[] = [
     {
-      filename: usesClaudeConfig ? 'CLAUDE.md' : usesReplitConfig ? 'replit.md' : 'AGENTS.md',
-      content: usesClaudeConfig 
-        ? claudeMdTemplate(
-            projectName || undefined, 
-            mode === 'advanced' ? setupCommands : undefined, 
-            mode === 'advanced' ? codeStyle : undefined,
-            techStack
-          )
-        : usesReplitConfig
-        ? replitMdTemplate(
-            projectName || undefined, 
-            mode === 'advanced' ? setupCommands : undefined, 
-            mode === 'advanced' ? codeStyle : undefined,
-            techStack
-          )
-        : agentsTemplate(
-            projectName || undefined, 
-            mode === 'advanced' ? setupCommands : undefined, 
-            mode === 'advanced' ? codeStyle : undefined,
-            preferredAgent || undefined,
-            techStack
-          )
+      filename: 'AGENTS.md',
+      content: agentsTemplate(
+        projectName || undefined, 
+        mode === 'advanced' ? setupCommands : undefined, 
+        mode === 'advanced' ? codeStyle : undefined,
+        preferredAgent || undefined,
+        techStack
+      )
+    },
+    {
+      filename: 'CLAUDE.md',
+      content: claudeMdTemplate(
+        projectName || undefined, 
+        mode === 'advanced' ? setupCommands : undefined, 
+        mode === 'advanced' ? codeStyle : undefined,
+        techStack
+      )
+    },
+    {
+      filename: 'replit.md',
+      content: replitMdTemplate(
+        projectName || undefined, 
+        mode === 'advanced' ? setupCommands : undefined, 
+        mode === 'advanced' ? codeStyle : undefined,
+        techStack
+      )
     },
     {
       filename: 'create-prd.md',
@@ -392,8 +394,8 @@ export default function HomePage() {
             Generate Essential Files for AI Development
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
-            Get the 4 essential markdown files that supercharge your AI development workflow: 
-            configuration files optimized for your agent, plus templates for PRDs, task generation, and task processing.
+            Get 6 essential markdown files that supercharge your AI development workflow: 
+            configuration files for all major agents (AGENTS.md, CLAUDE.md, replit.md), plus templates for PRDs, task generation, and task processing.
           </p>
           
           <div className="flex items-center justify-center gap-8 text-sm text-slate-600 mb-8">
@@ -407,10 +409,18 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto mb-8">
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
-              <span className="text-sm font-medium">Agent Config</span>
+              <span className="text-sm font-medium">AGENTS.md</span>
+            </div>
+            <div className="flex items-center gap-2 justify-center">
+              <FileText className="h-5 w-5 text-slate-500" />
+              <span className="text-sm font-medium">CLAUDE.md</span>
+            </div>
+            <div className="flex items-center gap-2 justify-center">
+              <FileText className="h-5 w-5 text-slate-500" />
+              <span className="text-sm font-medium">replit.md</span>
             </div>
             <div className="flex items-center gap-2 justify-center">
               <GitBranch className="h-5 w-5 text-slate-500" />
@@ -443,9 +453,9 @@ export default function HomePage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Customize Your {usesClaudeConfig ? 'CLAUDE.md' : usesReplitConfig ? 'replit.md' : 'AGENTS.md'}</CardTitle>
+                <CardTitle>Customize Your Agent Configuration Files</CardTitle>
                 <CardDescription>
-                  Personalize your {usesClaudeConfig ? 'CLAUDE.md' : usesReplitConfig ? 'replit.md' : 'AGENTS.md'} file with project-specific information
+                  Personalize all agent configuration files with project-specific information
                 </CardDescription>
               </div>
               <div className="flex bg-slate-100 rounded-lg p-1">
@@ -609,17 +619,17 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="agents" className="w-full">
-              <TabsList className="grid grid-cols-4 w-full mb-6">
-                <TabsTrigger value="agents" className="text-xs">
-                  {usesClaudeConfig ? 'CLAUDE.md' : usesReplitConfig ? 'replit.md' : 'AGENTS.md'}
-                </TabsTrigger>
+              <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full mb-6">
+                <TabsTrigger value="agents" className="text-xs">AGENTS.md</TabsTrigger>
+                <TabsTrigger value="claude" className="text-xs">CLAUDE.md</TabsTrigger>
+                <TabsTrigger value="replit" className="text-xs">replit.md</TabsTrigger>
                 <TabsTrigger value="prd" className="text-xs">PRD Template</TabsTrigger>
                 <TabsTrigger value="tasks" className="text-xs">Task Generator</TabsTrigger>
                 <TabsTrigger value="process" className="text-xs">Task Processor</TabsTrigger>
               </TabsList>
 
               {files.map((file, index) => (
-                <TabsContent key={file.filename} value={['agents', 'prd', 'tasks', 'process'][index]}>
+                <TabsContent key={file.filename} value={['agents', 'claude', 'replit', 'prd', 'tasks', 'process'][index]}>
                 <FileContent
                 filename={file.filename}
                 content={file.content}

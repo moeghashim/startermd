@@ -27,12 +27,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
     }
 
-    const systemPrompt = `You are an expert AI development consultant. Generate 4 markdown files for AI development workflows based on the user's project description.
+    const systemPrompt = `You are an expert AI development consultant. Generate 6 markdown files for AI development workflows based on the user's project description.
 
 IMPORTANT: Return ONLY a valid JSON object with this exact structure:
 {
   "agentsFile": {
-    "filename": "${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : preferredAgent === 'Replit' ? 'replit.md' : 'AGENTS.md'}",
+    "filename": "AGENTS.md",
+    "content": "markdown content here"
+  },
+  "claudeFile": {
+    "filename": "CLAUDE.md",
+    "content": "markdown content here"
+  },
+  "replitFile": {
+    "filename": "replit.md",
     "content": "markdown content here"
   },
   "prdFile": {
@@ -51,28 +59,7 @@ IMPORTANT: Return ONLY a valid JSON object with this exact structure:
 
 Generate these files:
 
-1. **${preferredAgent === 'Claude Code' ? 'CLAUDE.md' : preferredAgent === 'Replit' ? 'replit.md' : 'AGENTS.md'}**: Project-specific configuration
-   ${preferredAgent === 'Claude Code' ? `
-   Use this structure:
-   - Project Overview (describe the specific project)
-   - Technology Stack (based on user input)
-   - Setup Commands (project-specific)
-   - Code Style Guidelines (appropriate for the tech stack)
-   - Development Guidelines
-   - Testing Instructions
-   - Build and Deployment
-   - Additional Context
-   ` : preferredAgent === 'Replit' ? `
-   Use this structure for replit.md:
-   - Project Overview (describe the specific project)
-   - Technology Stack (Frontend, Backend, Database, Package Manager)
-   - Setup Commands (project-specific installation and dev commands)
-   - Coding Style & Preferences (language preferences, component preferences, styling, type definitions)
-   - Communication Preferences (development approach, code implementation)
-   - Project Context (current development phase, key priorities)
-   - Best Practices (file organization, dependencies, testing strategy)
-   - Additional Notes
-   ` : `
+1. **AGENTS.md**: General agent configuration file
    Use this structure:
    - Setup commands (project-specific)
    - Code style (appropriate for the tech stack)  
@@ -82,15 +69,36 @@ Generate these files:
    - Testing instructions
    - Build and deployment
    - Additional instructions
-   `}
 
-2. **create-prd.md**: Template for generating Product Requirements Documents
+2. **CLAUDE.md**: Claude Code specific configuration
+   Use this structure:
+   - Project Overview (describe the specific project)
+   - Technology Stack (based on user input)
+   - Setup Commands (project-specific)
+   - Code Style Guidelines (appropriate for the tech stack)
+   - Development Guidelines
+   - Testing Instructions
+   - Build and Deployment
+   - Additional Context
+
+3. **replit.md**: Replit Agent specific configuration
+   Use this structure:
+   - Project Overview (describe the specific project)
+   - Technology Stack (Frontend, Backend, Database, Package Manager)
+   - Setup Commands (project-specific installation and dev commands)
+   - Coding Style & Preferences (language preferences, component preferences, styling, type definitions)
+   - Communication Preferences (development approach, code implementation)
+   - Project Context (current development phase, key priorities)
+   - Best Practices (file organization, dependencies, testing strategy)
+   - Additional Notes
+
+4. **create-prd.md**: Template for generating Product Requirements Documents
    Keep this as a reusable template but customize examples to match the project domain.
 
-3. **generate-tasks.md**: Template for breaking PRDs into task lists
+5. **generate-tasks.md**: Template for breaking PRDs into task lists
    Keep this as a reusable template but customize examples to match the project domain.
 
-4. **process-task-list.md**: Template for managing task execution
+6. **process-task-list.md**: Template for managing task execution
    Keep this as a reusable template.
 
 Project Details:

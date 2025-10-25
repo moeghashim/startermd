@@ -18,6 +18,8 @@ interface GeneratedFile {
 
 interface GeneratedFiles {
   agentsFile: GeneratedFile;
+  claudeFile: GeneratedFile;
+  replitFile: GeneratedFile;
   prdFile: GeneratedFile;
   tasksFile: GeneratedFile;
   processFile: GeneratedFile;
@@ -94,6 +96,8 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
 
     const files: FileContentType[] = [
       generatedFiles.agentsFile,
+      generatedFiles.claudeFile,
+      generatedFiles.replitFile,
       generatedFiles.prdFile,
       generatedFiles.tasksFile,
       generatedFiles.processFile,
@@ -188,6 +192,8 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
   if (generatedFiles) {
     const files = [
       { key: 'agents', file: generatedFiles.agentsFile, icon: FileText },
+      { key: 'claude', file: generatedFiles.claudeFile, icon: FileText },
+      { key: 'replit', file: generatedFiles.replitFile, icon: FileText },
       { key: 'prd', file: generatedFiles.prdFile, icon: FileText },
       { key: 'tasks', file: generatedFiles.tasksFile, icon: FileText },
       { key: 'process', file: generatedFiles.processFile, icon: FileText },
@@ -258,7 +264,7 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="agents" className="w-full">
-                <TabsList className="grid grid-cols-4 w-full mb-6">
+                <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full mb-6">
                   {files.map(({ key, file }) => (
                     <TabsTrigger key={key} value={key} className="text-xs">
                       {file.filename}
