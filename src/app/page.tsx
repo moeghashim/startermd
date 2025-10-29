@@ -651,6 +651,9 @@ export default function HomePage() {
           <p className="text-xs">
             STARTERMD.com - Generate essential files for AI-powered development workflows
           </p>
+          <p className="text-xs mt-2">
+            <a href="https://github.com/moeghashim/startermd" className="underline hover:text-slate-700" target="_blank" rel="noopener noreferrer">Fork this app on GitHub</a>
+          </p>
         </footer>
       </main>
     </div>
