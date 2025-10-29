@@ -280,17 +280,9 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <Button 
-                  onClick={() => window.location.href = '/stats'} 
-                  variant="outline" 
-                  className="gap-2"
-                >
-                  <BarChart3 className="h-4 w-4" />
-                  Stats
-                </Button>
-                <Button onClick={handleBackToHome} variant="outline">
-                  Back to Home
-                </Button>
+              <Button onClick={handleBackToHome} variant="outline">
+              Back to Home
+              </Button>
               </div>
             </div>
           </div>
@@ -318,19 +310,9 @@ export default function HomePage() {
                   <p className="text-sm text-slate-600">AI development workflow files generator</p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Button 
-                  onClick={() => window.location.href = '/stats'} 
-                  variant="outline" 
-                  className="gap-2"
-                >
-                  <BarChart3 className="h-4 w-4" />
-                  Stats
-                </Button>
-                <Button onClick={handleBackToHome} variant="outline">
-                  Back to Home
-                </Button>
-              </div>
+              <Button onClick={handleBackToHome} variant="outline">
+                Back to Home
+              </Button>
             </div>
           </div>
         </header>
@@ -368,21 +350,10 @@ export default function HomePage() {
                 <p className="text-sm text-slate-600">AI development workflow files generator</p>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button 
-                onClick={() => window.location.href = '/stats'} 
-                size="sm" 
-                variant="outline" 
-                className="gap-2"
-              >
-                <BarChart3 className="h-4 w-4" />
-                Stats
-              </Button>
-              <Button onClick={handleDownloadAll} size="sm" className="gap-2">
-                <Archive className="h-4 w-4" />
-                Download All Files
-              </Button>
-            </div>
+            <Button onClick={handleDownloadAll} size="sm" className="gap-2">
+              <Archive className="h-4 w-4" />
+              Download All Files
+            </Button>
           </div>
         </div>
       </header>
@@ -436,16 +407,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="text-center">
-            <Button 
-              onClick={() => window.location.href = '/stats'} 
-              variant="outline" 
-              className="gap-2 mb-4"
-            >
-              <BarChart3 className="h-4 w-4" />
-              View Generation Statistics
-            </Button>
-          </div>
+
         </div>
 
         {/* Configuration Section */}
