@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, BarChart3 } from 'lucide-react';
+import { FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User, Sparkles, Download } from 'lucide-react';
 
 import agentsTemplate from '@/lib/templates/agents-md';
 import claudeMdTemplate from '@/lib/templates/claude-md';
@@ -25,7 +25,7 @@ import { FileContent } from '@/components/FileContent';
 export default function HomePage() {
   const [mode, setMode] = useState<'basic' | 'advanced'>('basic');
   const [projectName, setProjectName] = useState('');
-  const [preferredAgent, setPreferredAgent] = useState('');
+  const [preferredAgent, setPreferredAgent] = useState('Cursor');
   const [techStack, setTechStack] = useState<string[]>(['React', 'TypeScript', 'Next.js']);
   const [newTech, setNewTech] = useState('');
   const [setupCommands, setSetupCommands] = useState([
@@ -191,20 +191,10 @@ export default function HomePage() {
   const handleDownloadAll = async () => {
     downloadZip(files, 'startermd-files.zip');
     
-    // Track stats for free download
+    // Track stats for free download (non-blocking)
     try {
-      console.log('📊 Tracking download stats for agent:', preferredAgent || 'Unknown');
-      const response = await fetch('/api/stats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agent: preferredAgent || 'Unknown' }),
-      });
-      
-      if (response.ok) {
-        console.log('📊 Download stats tracked successfully');
-      } else {
-        console.error('📊 Failed to track download stats:', response.status, await response.text());
-      }
+      const data = new Blob([JSON.stringify({ agent: preferredAgent || 'Unknown' })], { type: 'application/json' });
+      navigator.sendBeacon('/api/stats', data);
     } catch (error) {
       console.error('📊 Failed to track download stats:', error);
     }
@@ -213,20 +203,10 @@ export default function HomePage() {
   const handleDownloadSingle = async (file: FileContentType) => {
     downloadFile(file.filename, file.content);
     
-    // Track stats for single file download
+    // Track stats for single file download (non-blocking)
     try {
-      console.log('📊 Tracking single file download stats for agent:', preferredAgent || 'Unknown');
-      const response = await fetch('/api/stats', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ agent: preferredAgent || 'Unknown' }),
-      });
-      
-      if (response.ok) {
-        console.log('📊 Single file download stats tracked successfully');
-      } else {
-        console.error('📊 Failed to track single file download stats:', response.status, await response.text());
-      }
+      const data = new Blob([JSON.stringify({ agent: preferredAgent || 'Unknown' })], { type: 'application/json' });
+      navigator.sendBeacon('/api/stats', data);
     } catch (error) {
       console.error('📊 Failed to track single file download stats:', error);
     }
@@ -359,6 +339,11 @@ export default function HomePage() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Accessibility live region for copy feedback */}
+        <div className="sr-only" aria-live="polite">
+          {copiedFile && `${copiedFile} copied to clipboard`}
+        </div>
+
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-slate-900 mb-4">
@@ -407,6 +392,54 @@ export default function HomePage() {
             </div>
           </div>
 
+          {/* Hero CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button 
+              size="lg" 
+              className="gap-2 text-base px-8"
+              onClick={() => document.getElementById('ai-generation')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Sparkles className="h-5 w-5" />
+              Generate with AI ($5)
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="gap-2 text-base px-8"
+              onClick={() => document.getElementById('free-templates')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              <Download className="h-5 w-5" />
+              Download Free Templates
+            </Button>
+          </div>
+
+          {/* How it Works */}
+          <div className="mt-12 bg-white rounded-lg border p-6 max-w-3xl mx-auto">
+            <h3 className="text-lg font-semibold text-center mb-6">How It Works</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-white mx-auto mb-3">
+                  <span className="text-lg font-bold">1</span>
+                </div>
+                <h4 className="font-medium mb-2">Choose Your Agent</h4>
+                <p className="text-sm text-slate-600">Select your preferred coding agent from our supported list</p>
+              </div>
+              <div className="text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-white mx-auto mb-3">
+                  <span className="text-lg font-bold">2</span>
+                </div>
+                <h4 className="font-medium mb-2">Add Project Details</h4>
+                <p className="text-sm text-slate-600">Optionally customize with project name, tech stack, and commands</p>
+              </div>
+              <div className="text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-900 text-white mx-auto mb-3">
+                  <span className="text-lg font-bold">3</span>
+                </div>
+                <h4 className="font-medium mb-2">Download or Generate</h4>
+                <p className="text-sm text-slate-600">Get free templates instantly or generate custom files with AI</p>
+              </div>
+            </div>
+          </div>
 
         </div>
 
@@ -426,6 +459,7 @@ export default function HomePage() {
                   size="sm"
                   onClick={() => setMode('basic')}
                   className="gap-2 text-xs"
+                  aria-pressed={mode === 'basic'}
                 >
                   <User className="h-3 w-3" />
                   Basic
@@ -435,6 +469,7 @@ export default function HomePage() {
                   size="sm"
                   onClick={() => setMode('advanced')}
                   className="gap-2 text-xs"
+                  aria-pressed={mode === 'advanced'}
                 >
                   <Settings className="h-3 w-3" />
                   Advanced
@@ -540,15 +575,16 @@ export default function HomePage() {
         </Card>
 
         {/* AI Generation Section */}
-        <div className="space-y-6">
+        <div id="ai-generation" className="space-y-6 scroll-mt-20">
           <div className="text-center">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Sparkles className="h-6 w-6 text-purple-600" />
-              <h3 className="text-2xl font-bold">Generate Custom Files with AI</h3>
+              <h2 className="text-2xl font-bold">Generate Custom Files with AI</h2>
             </div>
-            <p className="text-slate-600 max-w-2xl mx-auto">
+            <p className="text-slate-600 max-w-2xl mx-auto mb-2">
               Want files tailored specifically to your project? Our AI can analyze your project description and generate custom configuration and workflow files optimized for your use case.
             </p>
+            <p className="text-sm text-slate-500">One-time payment. Delivered instantly. No account required.</p>
           </div>
 
           <AIGeneration 
@@ -565,11 +601,17 @@ export default function HomePage() {
         </div>
 
         {/* Files Preview */}
-        <Card>
+        <Card id="free-templates" className="scroll-mt-20">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <CardTitle>Free Template Files</CardTitle>
-              <Badge variant="secondary">Free</Badge>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <h2 className="text-xl font-bold">Free Template Files</h2>
+                <Badge variant="secondary">Free</Badge>
+              </div>
+              <Button onClick={handleDownloadAll} className="gap-2">
+                <Download className="h-4 w-4" />
+                Download all (.zip)
+              </Button>
             </div>
             <CardDescription>
               Preview and download template files with your basic customizations
@@ -577,7 +619,7 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="agents" className="w-full">
-              <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full mb-6">
+              <TabsList className="w-full mb-6 overflow-x-auto flex sm:grid sm:grid-cols-3 lg:grid-cols-6">
                 <TabsTrigger value="agents" className="text-xs">AGENTS.md</TabsTrigger>
                 <TabsTrigger value="claude" className="text-xs">CLAUDE.md</TabsTrigger>
                 <TabsTrigger value="replit" className="text-xs">replit.md</TabsTrigger>
