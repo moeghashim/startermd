@@ -13,6 +13,7 @@ import { FileText, Zap, GitBranch, CheckSquare, Archive, Plus, X, Settings, User
 import agentsTemplate from '@/lib/templates/agents-md';
 import claudeMdTemplate from '@/lib/templates/claude-md';
 import replitMdTemplate from '@/lib/templates/replit-md';
+import skillMdTemplate from '@/lib/templates/skill-md';
 import createPrdTemplate from '@/lib/templates/create-prd';
 import generateTasksTemplate from '@/lib/templates/generate-tasks';
 import processTaskListTemplate from '@/lib/templates/process-task-list';
@@ -172,6 +173,15 @@ export default function HomePage() {
         mode === 'advanced' ? setupCommands : undefined, 
         mode === 'advanced' ? codeStyle : undefined,
         techStack
+      )
+    },
+    {
+      filename: 'SKILL.md',
+      content: skillMdTemplate(
+        projectName || undefined,
+        projectName || undefined,
+        techStack,
+        mode === 'advanced' ? setupCommands : undefined
       )
     },
     {
@@ -350,8 +360,8 @@ export default function HomePage() {
             Generate Essential Files for AI Development
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
-            Get 6 essential markdown files that supercharge your AI development workflow: 
-            configuration files for all major agents (AGENTS.md, CLAUDE.md, replit.md), plus templates for PRDs, task generation, and task processing.
+            Get 7 essential markdown files that supercharge your AI development workflow: 
+            configuration files for all major agents (AGENTS.md, CLAUDE.md, SKILL.md, replit.md), plus templates for PRDs, task generation, and task processing.
           </p>
           
           <div className="flex items-center justify-center gap-8 text-sm text-slate-600 mb-8">
@@ -365,7 +375,7 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-4xl mx-auto mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 max-w-5xl mx-auto mb-8">
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
               <span className="text-sm font-medium">AGENTS.md</span>
@@ -373,6 +383,10 @@ export default function HomePage() {
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
               <span className="text-sm font-medium">CLAUDE.md</span>
+            </div>
+            <div className="flex items-center gap-2 justify-center">
+              <FileText className="h-5 w-5 text-slate-500" />
+              <span className="text-sm font-medium">SKILL.md</span>
             </div>
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
@@ -619,9 +633,10 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="agents" className="w-full">
-              <TabsList className="w-full mb-6 overflow-x-auto flex sm:grid sm:grid-cols-3 lg:grid-cols-6">
+              <TabsList className="w-full mb-6 overflow-x-auto flex sm:grid sm:grid-cols-3 lg:grid-cols-7">
                 <TabsTrigger value="agents" className="text-xs">AGENTS.md</TabsTrigger>
                 <TabsTrigger value="claude" className="text-xs">CLAUDE.md</TabsTrigger>
+                <TabsTrigger value="skill" className="text-xs">SKILL.md</TabsTrigger>
                 <TabsTrigger value="replit" className="text-xs">replit.md</TabsTrigger>
                 <TabsTrigger value="prd" className="text-xs">PRD Template</TabsTrigger>
                 <TabsTrigger value="tasks" className="text-xs">Task Generator</TabsTrigger>
@@ -629,7 +644,7 @@ export default function HomePage() {
               </TabsList>
 
               {files.map((file, index) => (
-                <TabsContent key={file.filename} value={['agents', 'claude', 'replit', 'prd', 'tasks', 'process'][index]}>
+                <TabsContent key={file.filename} value={['agents', 'claude', 'skill', 'replit', 'prd', 'tasks', 'process'][index]}>
                 <FileContent
                 filename={file.filename}
                 content={file.content}
