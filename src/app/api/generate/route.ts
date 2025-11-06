@@ -50,10 +50,6 @@ IMPORTANT: Return ONLY a valid JSON object with this exact structure:
   "tasksFile": {
     "filename": "generate-tasks.md",
     "content": "markdown content here"
-  },
-  "processFile": {
-    "filename": "process-task-list.md",
-    "content": "markdown content here"
   }
 }
 
@@ -97,9 +93,6 @@ Generate these files:
 
 5. **generate-tasks.md**: Template for breaking PRDs into task lists
    Keep this as a reusable template but customize examples to match the project domain.
-
-6. **process-task-list.md**: Template for managing task execution
-   Keep this as a reusable template.
 
 Project Details:
 - Name: ${projectName || 'Not specified'}

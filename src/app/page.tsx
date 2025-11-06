@@ -16,7 +16,6 @@ import replitMdTemplate from '@/lib/templates/replit-md';
 import skillMdTemplate from '@/lib/templates/skill-md';
 import createPrdTemplate from '@/lib/templates/create-prd';
 import generateTasksTemplate from '@/lib/templates/generate-tasks';
-import processTaskListTemplate from '@/lib/templates/process-task-list';
 import { downloadFile, downloadZip, FileContent as FileContentType } from '@/lib/file-utils';
 import AIGeneration from '@/components/AIGeneration';
 import PaymentSuccess from '@/components/PaymentSuccess';
@@ -191,10 +190,6 @@ export default function HomePage() {
     {
       filename: 'generate-tasks.md',
       content: generateTasksTemplate()
-    },
-    {
-      filename: 'process-task-list.md',
-      content: processTaskListTemplate()
     }
   ];
 
@@ -360,8 +355,8 @@ export default function HomePage() {
             Generate Essential Files for AI Development
           </h2>
           <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
-            Get 7 essential markdown files that supercharge your AI development workflow: 
-            configuration files for all major agents (AGENTS.md, CLAUDE.md, SKILL.md, replit.md), plus templates for PRDs, task generation, and task processing.
+            Get 6 essential markdown files that supercharge your AI development workflow: 
+            configuration files for all major agents (AGENTS.md, CLAUDE.md, SKILL.md, replit.md), plus templates for PRD creation and task generation.
           </p>
           
           <div className="flex items-center justify-center gap-8 text-sm text-slate-600 mb-8">
@@ -375,7 +370,7 @@ export default function HomePage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4 max-w-5xl mx-auto mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl mx-auto mb-8">
             <div className="flex items-center gap-2 justify-center">
               <FileText className="h-5 w-5 text-slate-500" />
               <span className="text-sm font-medium">AGENTS.md</span>
@@ -399,10 +394,6 @@ export default function HomePage() {
             <div className="flex items-center gap-2 justify-center">
               <CheckSquare className="h-5 w-5 text-slate-500" />
               <span className="text-sm font-medium">Task Generator</span>
-            </div>
-            <div className="flex items-center gap-2 justify-center">
-              <Zap className="h-5 w-5 text-slate-500" />
-              <span className="text-sm font-medium">Task Processor</span>
             </div>
           </div>
 
