@@ -624,18 +624,17 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <Tabs defaultValue="agents" className="w-full">
-              <TabsList className="w-full mb-6 overflow-x-auto flex sm:grid sm:grid-cols-3 lg:grid-cols-7">
+              <TabsList className="w-full mb-6 overflow-x-auto flex sm:grid sm:grid-cols-3 lg:grid-cols-6">
                 <TabsTrigger value="agents" className="text-xs">AGENTS.md</TabsTrigger>
                 <TabsTrigger value="claude" className="text-xs">CLAUDE.md</TabsTrigger>
                 <TabsTrigger value="skill" className="text-xs">SKILL.md</TabsTrigger>
                 <TabsTrigger value="replit" className="text-xs">replit.md</TabsTrigger>
                 <TabsTrigger value="prd" className="text-xs">PRD Template</TabsTrigger>
                 <TabsTrigger value="tasks" className="text-xs">Task Generator</TabsTrigger>
-                <TabsTrigger value="process" className="text-xs">Task Processor</TabsTrigger>
               </TabsList>
 
               {files.map((file, index) => (
-                <TabsContent key={file.filename} value={['agents', 'claude', 'skill', 'replit', 'prd', 'tasks', 'process'][index]}>
+                <TabsContent key={file.filename} value={['agents', 'claude', 'skill', 'replit', 'prd', 'tasks'][index]}>
                 <FileContent
                 filename={file.filename}
                 content={file.content}

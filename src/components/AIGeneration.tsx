@@ -26,7 +26,6 @@ interface GeneratedFiles {
   agentsFile: GeneratedFile;
   prdFile: GeneratedFile;
   tasksFile: GeneratedFile;
-  processFile: GeneratedFile;
 }
 
 interface CouponData {
@@ -146,7 +145,6 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
       generatedFiles.agentsFile,
       generatedFiles.prdFile,
       generatedFiles.tasksFile,
-      generatedFiles.processFile,
     ];
 
     downloadZip(files, 'ai-generated-files.zip');
@@ -215,7 +213,7 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
           </div>
         </div>
         <CardDescription>
-          Get all 4 files custom-generated for your specific project using AI. 
+          Get all 3 files custom-generated for your specific project using AI. 
           Describe your project and we&apos;ll create tailored configuration and workflow files.
         </CardDescription>
       </CardHeader>
@@ -310,10 +308,6 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
             <div className="flex items-center gap-2">
               <CheckCircle className="h-4 w-4 text-green-500" />
               <span>Task generation template customized for your project type</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span>Process management template for your workflow</span>
             </div>
           </div>
         </div>

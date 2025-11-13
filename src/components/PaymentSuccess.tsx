@@ -22,7 +22,6 @@ interface GeneratedFiles {
   replitFile: GeneratedFile;
   prdFile: GeneratedFile;
   tasksFile: GeneratedFile;
-  processFile: GeneratedFile;
 }
 
 interface PaymentSuccessProps {
@@ -100,7 +99,6 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
       generatedFiles.replitFile,
       generatedFiles.prdFile,
       generatedFiles.tasksFile,
-      generatedFiles.processFile,
     ];
 
     downloadZip(files, 'ai-generated-files.zip');
@@ -196,7 +194,6 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
       { key: 'replit', file: generatedFiles.replitFile, icon: FileText },
       { key: 'prd', file: generatedFiles.prdFile, icon: FileText },
       { key: 'tasks', file: generatedFiles.tasksFile, icon: FileText },
-      { key: 'process', file: generatedFiles.processFile, icon: FileText },
     ];
 
     return (
@@ -264,7 +261,7 @@ export default function PaymentSuccess({ sessionId, onBack }: PaymentSuccessProp
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="agents" className="w-full">
-                <TabsList className="grid grid-cols-3 lg:grid-cols-6 w-full mb-6">
+                <TabsList className="grid grid-cols-3 lg:grid-cols-5 w-full mb-6">
                   {files.map(({ key, file }) => (
                     <TabsTrigger key={key} value={key} className="text-xs">
                       {file.filename}
