@@ -1,10 +1,10 @@
 /**
- * Test stats with actual running Next.js server
+ * Test stats with actual running server
  * This script assumes the server is running on localhost:3000
  */
 
 async function testWithServer() {
-  console.log('🌐 Testing stats with running Next.js server...');
+  console.log('🌐 Testing stats with running server...');
   console.log('Make sure to run "npm run dev" first!\n');
 
   try {

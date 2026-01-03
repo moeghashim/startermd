@@ -2,7 +2,7 @@
  * Test the exact lib functions that the API routes use
  */
 
-// Set up environment like Next.js would
+// Set up environment like the web framework would
 const fs = require('fs');
 const path = require('path');
 

@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/test-stats.js",
+    "test:file": "node",
+    "lint:file": "eslint",
+    "lint:claude": "eslint"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.32",

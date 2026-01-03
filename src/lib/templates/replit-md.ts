@@ -25,7 +25,7 @@ ${name} is built with modern web technologies focusing on ${stack.join(', ')}. T
 
 ## Technology Stack
 **Frontend:** ${stack.filter(tech => 
-  ['React', 'Vue', 'Angular', 'Svelte', 'Next.js', 'Nuxt', 'TypeScript', 'JavaScript'].includes(tech)
+  ['React', 'Vue', 'Angular', 'Svelte', 'Nuxt', 'TypeScript', 'JavaScript'].includes(tech)
 ).join(', ') || 'Web Technologies'}
 
 **Backend:** ${stack.filter(tech => 

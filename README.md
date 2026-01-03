@@ -25,7 +25,7 @@ Visit [STARTER.md](https://startermd-8m7tn61v3-bannaa.vercel.app) to try it out!
 
 ## 🛠 Tech Stack
 
-- **Frontend**: Next.js 14, TypeScript, Tailwind CSS
+- **Frontend**: TypeScript, Tailwind CSS
 - **UI Components**: shadcn/ui
 - **AI Integration**: OpenAI GPT-4
 - **Payments**: Stripe

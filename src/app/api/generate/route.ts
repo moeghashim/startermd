@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     const { prompt, projectName, preferredAgent, techStack } = await req.json();
     
     // Use default tech stack if none provided
-    const defaultTechStack = ['React', 'Next.js', 'JavaScript'];
+    const defaultTechStack = ['React', 'JavaScript'];
     const finalTechStack = techStack && techStack.length > 0 ? techStack : defaultTechStack;
 
     if (!prompt) {

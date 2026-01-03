@@ -26,7 +26,7 @@ export default function HomePage() {
   const [mode, setMode] = useState<'basic' | 'advanced'>('basic');
   const [projectName, setProjectName] = useState('');
   const [preferredAgent, setPreferredAgent] = useState('Cursor');
-  const [techStack, setTechStack] = useState<string[]>(['React', 'TypeScript', 'Next.js']);
+  const [techStack, setTechStack] = useState<string[]>(['React', 'TypeScript']);
   const [newTech, setNewTech] = useState('');
   const [setupCommands, setSetupCommands] = useState([
     'Install deps: `npm install`',

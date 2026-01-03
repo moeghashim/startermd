@@ -225,7 +225,7 @@ export default function AIGeneration({ projectName, preferredAgent, techStack }:
           <Textarea
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe your project in detail... e.g., 'A React-based e-commerce platform with Next.js, TypeScript, and Stripe integration. Users can browse products, add to cart, and checkout. We need authentication, product management, and order processing.'"
+            placeholder="Describe your project in detail... e.g., 'A React-based e-commerce platform with TypeScript and Stripe integration. Users can browse products, add to cart, and checkout. We need authentication, product management, and order processing.'"
             rows={6}
             className="resize-none"
           />
